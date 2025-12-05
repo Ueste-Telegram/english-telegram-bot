@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 English Vocabulary Bot</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        /* БАЗОВЫЕ СТИЛИ */
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        
+        /* КАРТОЧКА */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            color: #333;
+        }
+        
+        /* КНОПКИ */
+        .btn {
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px 0;
+            width: 100%;
+            transition: all 0.3s;
+        }
+        
+        .btn:active {
+            transform: scale(0.98);
+        }
+        
+        .btn-small {
+            padding: 12px 20px;
+            font-size: 16px;
+        }
+        
+        /* СЛОВО И ПЕРЕВОД */
+        .word-display {
+            font-size: 48px;
+            font-weight: bold;
+            text-align: center;
+            margin: 30px 0;
+            color: #6a11cb;
+            min-height: 80px;
+        }
+        
+        .translation-display {
+            font-size: 32px;
+            text-align: center;
+            margin: 20px 0;
+            color: #666;
+            min-height: 50px;
+        }
+        
+        /* СТАТИСТИКА */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .stat-box {
+            background: rgba(106, 17, 203, 0.1);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 28px;
+            font-weight: bold;
+            color: #6a11cb;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        /* ПРОГРЕСС БАР */
+        .progress-container {
+            margin: 20px 0;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+        
+        /* РЕЖИМЫ */
+        .mode-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .mode-btn {
+            background: white;
+            border: 2px solid #6a11cb;
+            color: #6a11cb;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .mode-btn:active {
+            background: #6a11cb;
+            color: white;
+        }
+        
+        /* СКРЫТЫЕ ЭЛЕМЕНТЫ */
+        .hidden {
+            display: none;
+        }
+        
+        /* МОБИЛЬНАЯ АДАПТАЦИЯ */
+        @media (max-width: 480px) {
+            .word-display { font-size: 36px; }
+            .translation-display { font-size: 24px; }
+            .btn { padding: 14px 20px; font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- ШАПКА -->
+        <div style="text-align: center; padding: 20px 0;">
+            <h1>📚 English Vocabulary</h1>
+            <p style="opacity: 0.8; margin-top: 5px;">Учи английский легко!</p>
+        </div>
+        
+        <!-- ПРОГРЕСС -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <span>Прогресс</span>
+                <span id="progress-text">0/0</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+        </div>
+        
+        <!-- КАРТОЧКА СЛОВА -->
+        <div class="card" id="flashcard">
+            <div class="word-display" id="english-word">hello</div>
+            <div class="translation-display hidden" id="russian-translation">привет</div>
+            
+            <div style="margin-top: 30px;">
+                <button class="btn" onclick="showTranslation()" id="show-btn">
+                    👁️ Показать перевод
+                </button>
+                <button class="btn btn-small hidden" onclick="nextWord()" id="next-btn">
+                    Далее →
+                </button>
+            </div>
+            
+            <div style="margin-top: 20px; display: flex; gap: 10px;">
+                <button style="flex: 1; background: #4CAF50;" class="btn btn-small" onclick="markAsKnown()">
+                    ✅ Знаю
+                </button>
+                <button style="flex: 1; background: #FF9800;" class="btn btn-small" onclick="markAsReview()">
+                    🔁 Повторить
+                </button>
+            </div>
+        </div>
+        
+        <!-- СТАТИСТИКА -->
+        <div class="card">
+            <h3 style="margin-bottom: 15px; text-align: center;">📊 Статистика</h3>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-number" id="learned-words">0</div>
+                    <div class="stat-label">Выучено</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="today-words">0</div>
+                    <div class="stat-label">Сегодня</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="streak-days">0</div>
+                    <div class="stat-label">Дней подряд</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- РЕЖИМЫ ОБУЧЕНИЯ -->
+        <div class="card">
+            <h3 style="margin-bottom: 15px; text-align: center;">🎯 Режимы обучения</h3>
+            <div class="mode-grid">
+                <div class="mode-btn" onclick="setMode('cards')">
+                    🗂️ Карточки
+                </div>
+                <div class="mode-btn" onclick="setMode('test')">
+                    📝 Тест
+                </div>
+                <div class="mode-btn" onclick="setMode('typing')">
+                    ⌨️ Правописание
+                </div>
+                <div class="mode-btn" onclick="setMode('audio')">
+                    🔊 Аудио
+                </div>
+            </div>
+        </div>
+        
+        <!-- СЛОВАРЬ -->
+        <div class="card">
+            <h3 style="margin-bottom: 15px; text-align: center;">📖 Мой словарь</h3>
+            <div id="word-list" style="max-height: 200px; overflow-y: auto;">
+                <!-- Слова будут здесь -->
+            </div>
+            <button class="btn" onclick="showWordList()" style="margin-top: 15px;">
+                Показать все слова
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ==================== БАЗА ДАННЫХ СЛОВ ====================
+        // Простая база слов (можно расширять)
+        const vocabulary = [
+            // Уровень 1 (самые простые)
+            { en: "hello", ru: "привет", category: "Основы", level: 1 },
+            { en: "goodbye", ru: "до свидания", category: "Основы", level: 1 },
+            { en: "thank you", ru: "спасибо", category: "Основы", level: 1 },
+            { en: "please", ru: "пожалуйста", category: "Основы", level: 1 },
+            { en: "yes", ru: "да", category: "Основы", level: 1 },
+            { en: "no", ru: "нет", category: "Основы", level: 1 },
+            { en: "cat", ru: "кот", category: "Животные", level: 1 },
+            { en: "dog", ru: "собака", category: "Животные", level: 1 },
+            { en: "house", ru: "дом", category: "Дом", level: 1 },
+            { en: "car", ru: "машина", category: "Транспорт", level: 1 },
+            
+            // Уровень 2
+            { en: "beautiful", ru: "красивый", category: "Прилагательные", level: 2 },
+            { en: "interesting", ru: "интересный", category: "Прилагательные", level: 2 },
+            { en: "computer", ru: "компьютер", category: "Технологии", level: 2 },
+            { en: "friend", ru: "друг", category: "Люди", level: 2 },
+            { en: "family", ru: "семья", category: "Люди", level: 2 },
+            
+            // Уровень 3
+            { en: "environment", ru: "окружающая среда", category: "Природа", level: 3 },
+            { en: "opportunity", ru: "возможность", category: "Абстрактное", level: 3 },
+            { en: "knowledge", ru: "знание", category: "Абстрактное", level: 3 },
+            { en: "government", ru: "правительство", category: "Общество", level: 3 }
+        ];
+
+        // ==================== ПЕРЕМЕННЫЕ ====================
+        let currentWordIndex = 0;
+        let learnedWords = [];
+        let todayWords = [];
+        let streak = 0;
+        let currentMode = 'cards';
+
+        // ==================== ИНИЦИАЛИЗАЦИЯ ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserData();
+            showRandomWord();
+            updateStats();
+            updateWordList();
+        });
+
+        // ==================== ОСНОВНЫЕ ФУНКЦИИ ====================
+        
+        // Показать случайное слово
+        function showRandomWord() {
+            // Если слова закончились - начинаем сначала
+            if (currentWordIndex >= vocabulary.length) {
+                currentWordIndex = 0;
+            }
+            
+            const word = vocabulary[currentWordIndex];
+            
+            // Обновляем отображение
+            document.getElementById('english-word').textContent = word.en;
+            document.getElementById('russian-translation').textContent = word.ru;
+            document.getElementById('russian-translation').classList.add('hidden');
+            document.getElementById('next-btn').classList.add('hidden');
+            document.getElementById('show-btn').classList.remove('hidden');
+            
+            // Обновляем прогресс
+            updateProgress();
+        }
+        
+        // Показать перевод
+        function showTranslation() {
+            document.getElementById('russian-translation').classList.remove('hidden');
+            document.getElementById('next-btn').classList.remove('hidden');
+            document.getElementById('show-btn').classList.add('hidden');
+        }
+        
+        // Следующее слово
+        function nextWord() {
+            currentWordIndex = (currentWordIndex + 1) % vocabulary.length;
+            showRandomWord();
+        }
+        
+        // Отметить как выученное
+        function markAsKnown() {
+            const word = vocabulary[currentWordIndex];
+            const wordId = word.en;
+            
+            if (!learnedWords.includes(wordId)) {
+                learnedWords.push(wordId);
+                todayWords.push(wordId);
+                
+                saveUserData();
+                updateStats();
+                updateWordList();
+                
+                // Показываем уведомление
+                alert('✅ Отлично! Слово "' + word.en + '" добавлено в изученные!');
+                
+                // Следующее слово
+                setTimeout(nextWord, 500);
+            }
+        }
+        
+        // Отметить для повторения
+        function markAsReview() {
+            alert('🔁 Слово добавлено в список для повторения');
+            nextWord();
+        }
+        
+        // Обновить прогресс
+        function updateProgress() {
+            const progress = ((currentWordIndex + 1) / vocabulary.length) * 100;
+            document.getElementById('progress-bar').style.width = progress + '%';
+            document.getElementById('progress-text').textContent = 
+                (currentWordIndex + 1) + '/' + vocabulary.length;
+        }
+        
+        // Обновить статистику
+        function updateStats() {
+            document.getElementById('learned-words').textContent = learnedWords.length;
+            document.getElementById('today-words').textContent = todayWords.length;
+            document.getElementById('streak-days').textContent = streak;
+        }
+        
+        // Обновить список слов
+        function updateWordList() {
+            const container = document.getElementById('word-list');
+            container.innerHTML = '';
+            
+            // Показываем только 5 последних слов
+            const recentWords = learnedWords.slice(-5);
+            
+            recentWords.forEach(wordId => {
+                const word = vocabulary.find(w => w.en === wordId);
+                if (word) {
+                    const div = document.createElement('div');
+                    div.style.padding = '8px';
+                    div.style.borderBottom = '1px solid #eee';
+                    div.innerHTML = `
+                        <strong>${word.en}</strong> - ${word.ru}
+                        <small style="color: #666; float: right;">${word.category}</small>
+                    `;
+                    container.appendChild(div);
+                }
+            });
+            
+            if (recentWords.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: #666; padding: 20px;">Ещё нет изученных слов</div>';
+            }
+        }
+        
+        // Показать все слова
+        function showWordList() {
+            let message = "📖 ВАШ СЛОВАРЬ:\n\n";
+            learnedWords.forEach((wordId, index) => {
+                const word = vocabulary.find(w => w.en === wordId);
+                if (word) {
+                    message += `${index + 1}. ${word.en} - ${word.ru}\n`;
+                }
+            });
+            
+            if (learnedWords.length === 0) {
+                message = "Вы ещё не выучили ни одного слова. Начните сейчас!";
+            }
+            
+            alert(message);
+        }
+
+        // ==================== СОХРАНЕНИЕ ДАННЫХ ====================
+        
+        // Сохранить данные
+        function saveUserData() {
+            const userData = {
+                learnedWords: learnedWords,
+                todayWords: todayWords,
+                streak: streak,
+                lastStudyDate: new Date().toDateString()
+            };
+            localStorage.setItem('englishBotData', JSON.stringify(userData));
+        }
+        
+        // Загрузить данные
+        function loadUserData() {
+            const saved = localStorage.getItem('englishBotData');
+            if (saved) {
+                const data = JSON.parse(saved);
+                learnedWords = data.learnedWords || [];
+                todayWords = data.todayWords || [];
+                streak = data.streak || 0;
+                
+                // Проверяем стрик (дни подряд)
+                const today = new Date().toDateString();
+                if (data.lastStudyDate !== today) {
+                    // Сбрасываем ежедневные слова
+                    todayWords = [];
+                }
+            }
+        }
+
+        // ==================== РЕЖИМЫ ОБУЧЕНИЯ ====================
+        
+        // Установить режим
+        function setMode(mode) {
+            currentMode = mode;
+            
+            switch(mode) {
+                case 'cards':
+                    alert('✅ Режим карточек активирован');
+                    showRandomWord();
+                    break;
+                    
+                case 'test':
+                    startTestMode();
+                    break;
+                    
+                case 'typing':
+                    startTypingMode();
+                    break;
+                    
+                case 'audio':
+                    alert('🔊 Аудио режим скоро появится!');
+                    break;
+            }
+        }
+        
+        // Начать тестовый режим
+        function startTestMode() {
+            const word = vocabulary[currentWordIndex];
+            
+            // Создаем варианты ответов
+            let answers = [word.ru];
+            while (answers.length < 4) {
+                const randomWord = vocabulary[Math.floor(Math.random() * vocabulary.length)];
+                if (!answers.includes(randomWord.ru)) {
+                    answers.push(randomWord.ru);
+                }
+            }
+            
+            // Перемешиваем ответы
+            answers = shuffleArray(answers);
+            
+            // Показываем тест
+            const answerHTML = answers.map((answer, index) => `
+                <button class="btn" onclick="checkAnswer('${answer}', '${word.ru}')" 
+                        style="margin: 5px 0; text-align: left; background: white; color: #333; border: 2px solid #6a11cb;">
+                    ${String.fromCharCode(65 + index)}. ${answer}
+                </button>
+            `).join('');
+            
+            document.getElementById('english-word').innerHTML = `
+                <div style="font-size: 24px; margin-bottom: 20px;">Выберите перевод:</div>
+                <div style="font-size: 36px; color: #6a11cb;">"${word.en}"</div>
+            `;
+            
+            document.getElementById('russian-translation').innerHTML = answerHTML;
+            document.getElementById('russian-translation').classList.remove('hidden');
+            document.getElementById('show-btn').classList.add('hidden');
+            document.getElementById('next-btn').classList.add('hidden');
+        }
+        
+        // Проверить ответ в тесте
+        function checkAnswer(selected, correct) {
+            if (selected === correct) {
+                alert('✅ Правильно! Отличная работа!');
+                markAsKnown();
+            } else {
+                alert('❌ Неправильно. Правильный ответ: ' + correct);
+                nextWord();
+            }
+        }
+        
+        // Начать режим правописания
+        function startTypingMode() {
+            const word = vocabulary[currentWordIndex];
+            
+            document.getElementById('english-word').innerHTML = `
+                <div style="font-size: 24px; margin-bottom: 20px;">Напишите по-английски:</div>
+                <div style="font-size: 32px; color: #6a11cb;">"${word.ru}"</div>
+            `;
+            
+            document.getElementById('russian-translation').innerHTML = `
+                <input type="text" id="user-answer" 
+                       placeholder="Введите английское слово..." 
+                       style="width: 100%; padding: 15px; font-size: 18px; border: 3px solid #6a11cb; border-radius: 10px; margin: 20px 0;">
+                <button class="btn" onclick="checkTypingAnswer('${word.en}')">
+                    Проверить
+                </button>
+            `;
+            document.getElementById('russian-translation').classList.remove('hidden');
+            document.getElementById('show-btn').classList.add('hidden');
+            document.getElementById('next-btn').classList.add('hidden');
+        }
+        
+        // Проверить ответ в режиме правописания
+        function checkTypingAnswer(correct) {
+            const userAnswer = document.getElementById('user-answer').value.trim().toLowerCase();
+            
+            if (userAnswer === correct.toLowerCase()) {
+                alert('✅ Идеально! Правильно!');
+                markAsKnown();
+            } else {
+                alert(`❌ Почти! Правильно: ${correct}`);
+                nextWord();
+            }
+        }
+
+        // ==================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ====================
+        
+        // Перемешать массив
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // ==================== TELEGRAM ИНТЕГРАЦИЯ ====================
+        
+        // Если бот открыт в Telegram
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.expand(); // Раскрыть на весь экран
+            tg.ready(); // Готов к работе
+        }
+    </script>
+</body>
+  </html>
