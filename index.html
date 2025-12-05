@@ -3,135 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📚 English Vocabulary Bot</title>
+    <title>📚 English PRO</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* БАЗОВЫЕ СТИЛИ */
+        /* ========== БАЗОВЫЕ СТИЛИ ========== */
         * { 
             margin: 0; 
             padding: 0; 
             box-sizing: border-box; 
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
         
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #ffffff;
+            color: #333333;
             min-height: 100vh;
+            overflow-x: hidden;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-theme {
+            background: #000000;
+            color: #ffffff;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 100%;
+            padding: 12px;
+            padding-bottom: 80px;
+        }
+
+        /* ========== ТЕМЫ ========== */
+        .dark-theme .card,
+        .dark-theme .stat-box,
+        .dark-theme .mode-btn {
+            background: #1a1a1a !important;
+            border: 1px solid #333333 !important;
+            color: #ffffff !important;
+        }
+
+        .dark-theme .btn-secondary {
+            background: #2a2a2a !important;
+            color: #ffffff !important;
+            border: 1px solid #444444 !important;
+        }
+
+        .dark-theme input,
+        .dark-theme select {
+            background: #1a1a1a !important;
+            color: #ffffff !important;
+            border: 1px solid #333333 !important;
+        }
+
+        .dark-theme .letter-btn:not(:disabled) {
+            background: #2a2a2a !important;
+            color: #ffffff !important;
+            border: 1px solid #444444 !important;
+        }
+
+        /* ========== ШАПКА ========== */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
             padding: 20px;
+            text-align: center;
+            border-radius: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .dark-theme .header {
+            background: linear-gradient(135deg, #000000 0%, #333333 100%);
+        }
+
+        .header h1 {
+            font-size: 22px;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        /* ========== ВКЛАДКИ ========== */
+        .tabs {
+            display: flex;
+            background: #f0f0f0;
+            border-radius: 15px;
+            padding: 4px;
+            margin-bottom: 16px;
+            gap: 4px;
+            border: 1px solid #e0e0e0;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .dark-theme .tabs {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px 8px;
+            text-align: center;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: transparent;
+            border: none;
+            color: #666;
+            font-size: 12px;
+            min-width: 80px;
+        }
+
+        .dark-theme .tab {
+            color: #888;
+        }
+
+        .tab.active {
+            background: #667eea;
             color: white;
         }
-        
-        .container {
-            max-width: 100%;
-            margin: 0 auto;
+
+        .tab-content {
+            display: block;
         }
-        
-        /* КАРТОЧКА */
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ========== КАРТОЧКИ ========== */
         .card {
-            background: rgba(255, 255, 255, 0.95);
+            background: #ffffff;
             border-radius: 20px;
-            padding: 25px;
-            margin: 20px 0;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            color: #333;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+            border: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
         }
-        
-        /* КНОПКИ */
+
+        /* ========== КНОПКИ ========== */
         .btn {
-            background: linear-gradient(90deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
             padding: 16px 24px;
             border-radius: 15px;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            margin: 10px 0;
+            margin: 8px 0;
             width: 100%;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
-        
+
         .btn:active {
             transform: scale(0.98);
         }
-        
-        .btn-small {
-            padding: 12px 20px;
-            font-size: 16px;
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 1px solid #e0e0e0;
         }
-        
-        /* СЛОВО И ПЕРЕВОД */
+
+        .btn-small {
+            padding: 12px 16px;
+            font-size: 14px;
+        }
+
+        /* ========== СЛОВА ========== */
         .word-display {
-            font-size: 48px;
+            font-size: 42px;
             font-weight: bold;
             text-align: center;
-            margin: 30px 0;
+            margin: 25px 0;
             color: #667eea;
-            min-height: 80px;
+            min-height: 60px;
+            line-height: 1.2;
         }
-        
+
+        .dark-theme .word-display {
+            color: #8a9eff;
+        }
+
         .translation-display {
-            font-size: 32px;
+            font-size: 28px;
             text-align: center;
             margin: 20px 0;
             color: #666;
-            min-height: 50px;
+            min-height: 45px;
         }
-        
-        /* СТАТИСТИКА */
+
+        .dark-theme .translation-display {
+            color: #aaa;
+        }
+
+        /* ========== СТАТИСТИКА ========== */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 10px;
-            margin: 20px 0;
+            margin: 15px 0;
         }
-        
+
         .stat-box {
-            background: rgba(102, 126, 234, 0.1);
-            border-radius: 15px;
+            background: #f8f9fa;
             padding: 15px;
+            border-radius: 15px;
             text-align: center;
+            border: 1px solid #e0e0e0;
         }
-        
+
         .stat-number {
-            font-size: 28px;
-            font-weight: bold;
+            font-size: 24px;
+            font-weight: 700;
             color: #667eea;
         }
-        
+
         .stat-label {
-            font-size: 12px;
+            font-size: 11px;
             color: #666;
-            margin-top: 5px;
+            margin-top: 4px;
         }
-        
-        /* ПРОГРЕСС БАР */
-        .progress-container {
-            margin: 20px 0;
+
+        .dark-theme .stat-label {
+            color: #888;
         }
-        
-        .progress-bar {
-            height: 10px;
-            background: #e0e0e0;
-            border-radius: 5px;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            border-radius: 5px;
-            transition: width 0.5s ease;
-        }
-        
-        /* РЕЖИМЫ */
+
+        /* ========== РЕЖИМЫ ========== */
         .mode-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 10px;
-            margin: 20px 0;
+            margin: 15px 0;
         }
-        
+
         .mode-btn {
             background: white;
             border: 2px solid #667eea;
@@ -140,803 +257,1617 @@
             border-radius: 15px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s ease;
             font-weight: 600;
+            font-size: 13px;
         }
-        
+
         .mode-btn:active {
             background: #667eea;
             color: white;
         }
-        
-        /* СКРЫТЫЕ ЭЛЕМЕНТЫ */
-        .hidden {
-            display: none !important;
-        }
-        
-        /* ИГРА ВИСЕЛИЦА */
+
+        /* ========== ВИСЕЛИЦА ========== */
         .hangman-display {
             font-size: 36px;
-            letter-spacing: 10px;
+            letter-spacing: 8px;
             text-align: center;
-            margin: 30px 0;
+            margin: 25px 0;
             color: #333;
             font-family: monospace;
+            min-height: 50px;
         }
-        
-        .hangman-status {
-            text-align: center;
-            font-size: 18px;
-            margin: 20px 0;
-            color: #666;
-        }
-        
+
         .alphabet-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 8px;
+            gap: 6px;
             margin: 20px 0;
         }
-        
+
         .letter-btn {
             background: white;
             border: 2px solid #667eea;
             color: #667eea;
-            padding: 12px;
+            padding: 10px;
             border-radius: 10px;
             text-align: center;
             cursor: pointer;
             font-weight: bold;
+            font-size: 14px;
         }
-        
+
         .letter-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
-        
-        .letter-btn:active:not(:disabled) {
+
+        .letter-btn.correct {
+            background: #4CAF50 !important;
+            color: white !important;
+            border-color: #4CAF50 !important;
+        }
+
+        .letter-btn.wrong {
+            background: #f44336 !important;
+            color: white !important;
+            border-color: #f44336 !important;
+        }
+
+        /* ========== ПРОГРЕСС БАР ========== */
+        .progress-container {
+            margin: 15px 0;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .dark-theme .progress-bar {
+            background: #333333;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        /* ========== ТЕСТ ========== */
+        .test-options {
+            display: grid;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .test-option {
+            padding: 15px;
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            background: white;
+            color: #667eea;
+            font-weight: 600;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .test-option:active {
             background: #667eea;
             color: white;
         }
-        
-        /* АУДИО */
+
+        /* ========== ПРАВОПИСАНИЕ ========== */
+        .typing-input {
+            width: 100%;
+            padding: 16px;
+            font-size: 18px;
+            border: 3px solid #667eea;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+            background: white;
+            color: #333;
+        }
+
+        /* ========== АУДИО ========== */
         .audio-btn {
             background: #4CAF50;
             color: white;
             border: none;
-            padding: 15px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            font-size: 24px;
+            font-size: 20px;
             cursor: pointer;
             margin: 10px auto;
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        
-        /* МОБИЛЬНАЯ АДАПТАЦИЯ */
+
+        /* ========== НАСТРОЙКИ ========== */
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .dark-theme .settings-item {
+            border-bottom: 1px solid #333333;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #667eea;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(22px);
+        }
+
+        .difficulty-selector {
+            display: flex;
+            gap: 8px;
+            margin: 15px 0;
+        }
+
+        .difficulty-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            background: white;
+            color: #667eea;
+            transition: all 0.2s ease;
+        }
+
+        .difficulty-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .theme-selector {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            justify-content: center;
+        }
+
+        .theme-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            border: 3px solid transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .theme-btn.active {
+            border-color: #667eea;
+            transform: scale(1.1);
+        }
+
+        /* ========== ПРОФИЛЬ ========== */
+        .profile-header {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+            border: 4px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* ========== СЛОВАРЬ ========== */
+        .word-list-container {
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 15px 0;
+        }
+
+        .word-item {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dark-theme .word-item {
+            border-bottom: 1px solid #333333;
+        }
+
+        .word-status {
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .status-known {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .status-review {
+            background: #FF9800;
+            color: white;
+        }
+
+        .status-new {
+            background: #9E9E9E;
+            color: white;
+        }
+
+        /* ========== АДАПТИВНОСТЬ ========== */
         @media (max-width: 480px) {
-            .word-display { font-size: 36px; }
-            .translation-display { font-size: 24px; }
-            .btn { padding: 14px 20px; font-size: 16px; }
-            .alphabet-grid { grid-template-columns: repeat(6, 1fr); }
+            .container { padding: 10px; padding-bottom: 70px; }
+            .header { padding: 16px; border-radius: 16px; }
+            .header h1 { font-size: 18px; }
+            .word-display { font-size: 32px; }
+            .translation-display { font-size: 22px; }
+            .tab { padding: 10px 6px; font-size: 11px; min-width: 70px; }
+            .btn { padding: 14px 20px; font-size: 15px; }
+            .alphabet-grid { grid-template-columns: repeat(6, 1fr); gap: 5px; }
+            .letter-btn { padding: 8px; font-size: 13px; }
+            .stats-grid { gap: 8px; }
+            .stat-box { padding: 12px; }
+            .stat-number { font-size: 20px; }
+        }
+
+        /* ========== АНИМАЦИИ ========== */
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .shake {
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .bounce {
+            animation: bounce 0.5s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
         }
     </style>
 </head>
-<body>
+<body class="light-theme">
     <div class="container">
         <!-- ШАПКА -->
-        <div style="text-align: center; padding: 20px 0;">
+        <div class="header">
             <h1>📚 English Vocabulary PRO</h1>
-            <p style="opacity: 0.8; margin-top: 5px;">Уровень: <span id="user-level">Новичок</span></p>
+            <p>Уровень: <span id="user-level">Новичок</span> | XP: <span id="user-xp">0</span></p>
         </div>
-        
-        <!-- ПРОГРЕСС -->
-        <div class="card">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                <span>Прогресс дня</span>
-                <span id="progress-text">0/0</span>
-            </div>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progress-bar" style="width: 0%"></div>
-            </div>
-            <div style="text-align: center; margin-top: 10px; font-size: 14px; color: #666;">
-                XP: <span id="user-xp">0</span> | Уровень: <span id="level-number">1</span>
-            </div>
+
+        <!-- ВКЛАДКИ -->
+        <div class="tabs">
+            <button class="tab active" data-tab="learn">Учить</button>
+            <button class="tab" data-tab="practice">Практика</button>
+            <button class="tab" data-tab="dictionary">Словарь</button>
+            <button class="tab" data-tab="profile">Профиль</button>
+            <button class="tab" data-tab="settings">Настройки</button>
         </div>
-        
-        <!-- ОСНОВНОЙ ИНТЕРФЕЙС (КАРТОЧКИ) -->
-        <div class="card" id="flashcard-section">
-            <div class="word-display" id="english-word">hello</div>
-            <div class="translation-display hidden" id="russian-translation">привет</div>
-            
-            <div style="text-align: center; margin: 20px 0;">
-                <button class="audio-btn" onclick="speakWord()" id="speak-btn">
-                    🔊
-                </button>
-            </div>
-            
-            <div style="margin-top: 30px;">
-                <button class="btn" onclick="showTranslation()" id="show-btn">
-                    👁️ Показать перевод
-                </button>
-                <button class="btn btn-small hidden" onclick="nextWord()" id="next-btn">
-                    Далее →
-                </button>
-            </div>
-            
-            <div style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <button style="background: #4CAF50;" class="btn btn-small" onclick="markAsKnown()">
-                    ✅ Знаю
-                </button>
-                <button style="background: #FF9800;" class="btn btn-small" onclick="markAsReview()">
-                    🔁 Повторить
-                </button>
-            </div>
-        </div>
-        
-        <!-- ИГРА ВИСЕЛИЦА -->
-        <div class="card hidden" id="hangman-section">
-            <h3 style="text-align: center; margin-bottom: 20px;">🎮 Игра: Виселица</h3>
-            
-            <div class="hangman-status" id="hangman-status">
-                Угадай слово! Осталось ошибок: <span id="remaining-attempts">6</span>
-            </div>
-            
-            <div class="hangman-display" id="hangman-word">
-                _ _ _ _ _
-            </div>
-            
-            <div class="alphabet-grid" id="alphabet-buttons">
-                <!-- Буквы появятся здесь -->
-            </div>
-            
-            <div style="text-align: center; margin-top: 20px;">
-                <button class="btn btn-small" onclick="startNewHangmanGame()" style="background: #2196F3;">
-                    🆕 Новая игра
-                </button>
-                <button class="btn btn-small" onclick="showHint()" style="background: #FF9800;">
-                    💡 Подсказка
-                </button>
-            </div>
-        </div>
-        
-        <!-- СТАТИСТИКА -->
-        <div class="card">
-            <h3 style="margin-bottom: 15px; text-align: center;">📊 Статистика</h3>
-            <div class="stats-grid">
-                <div class="stat-box">
-                    <div class="stat-number" id="learned-words">0</div>
-                    <div class="stat-label">Выучено</div>
+
+        <!-- ВКЛАДКА: УЧИТЬ -->
+        <div id="learn-tab" class="tab-content">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span>Прогресс: <span id="progress-text">0/0</span></span>
+                    <span id="word-difficulty">Уровень 1</span>
                 </div>
-                <div class="stat-box">
-                    <div class="stat-number" id="today-words">0</div>
-                    <div class="stat-label">Сегодня</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-bar" style="width: 0%"></div>
                 </div>
-                <div class="stat-box">
-                    <div class="stat-number" id="streak-days">0</div>
-                    <div class="stat-label">Дней подряд</div>
+            </div>
+
+            <div class="card fade-in" id="flashcard-section">
+                <div class="word-display" id="english-word">hello</div>
+                <div class="translation-display hidden" id="russian-translation">привет</div>
+                
+                <div style="text-align: center; margin: 20px 0;">
+                    <button class="audio-btn" onclick="speakWord()" id="speak-btn">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button class="btn" onclick="showTranslation()" id="show-btn">
+                        <i class="fas fa-eye"></i> Показать перевод
+                    </button>
+                    <button class="btn btn-secondary hidden" onclick="nextWord()" id="next-btn">
+                        Далее <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px;">
+                    <button class="btn" style="background: #4CAF50;" onclick="markWord('known')">
+                        <i class="fas fa-check"></i> Знаю
+                    </button>
+                    <button class="btn" style="background: #FF9800;" onclick="markWord('review')">
+                        <i class="fas fa-redo"></i> Повторить
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 15px; text-align: center;">📊 Быстрая статистика</h3>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-number" id="stats-known">0</div>
+                        <div class="stat-label">Знаю</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="stats-review">0</div>
+                        <div class="stat-label">Повтор</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="stats-today">0</div>
+                        <div class="stat-label">Сегодня</div>
+                    </div>
                 </div>
             </div>
         </div>
-        
-        <!-- РЕЖИМЫ ОБУЧЕНИЯ -->
-        <div class="card">
-            <h3 style="margin-bottom: 15px; text-align: center;">🎯 Режимы обучения</h3>
-            <div class="mode-grid">
-                <div class="mode-btn" onclick="setMode('cards')">
-                    🗂️ Карточки
+
+        <!-- ВКЛАДКА: ПРАКТИКА -->
+        <div id="practice-tab" class="tab-content hidden">
+            <div class="card">
+                <h3 style="margin-bottom: 15px; text-align: center;">🎯 Выберите режим</h3>
+                <div class="mode-grid">
+                    <div class="mode-btn" onclick="startTestMode()">
+                        <i class="fas fa-question-circle"></i> Тест
+                    </div>
+                    <div class="mode-btn" onclick="startTypingMode()">
+                        <i class="fas fa-keyboard"></i> Правописание
+                    </div>
+                    <div class="mode-btn" onclick="startHangmanMode()">
+                        <i class="fas fa-gamepad"></i> Виселица
+                    </div>
+                    <div class="mode-btn" onclick="startListeningMode()">
+                        <i class="fas fa-headphones"></i> Аудирование
+                    </div>
                 </div>
-                <div class="mode-btn" onclick="setMode('test')">
-                    📝 Тест
+            </div>
+
+            <!-- ТЕСТ -->
+            <div class="card hidden" id="test-section">
+                <h3 style="margin-bottom: 20px; text-align: center;">📝 Тест</h3>
+                <div class="word-display" id="test-question">Выберите перевод слова:</div>
+                <div class="test-options" id="test-options">
+                    <!-- Варианты появятся здесь -->
                 </div>
-                <div class="mode-btn" onclick="setMode('typing')">
-                    ⌨️ Правописание
+                <button class="btn" onclick="nextTestQuestion()" id="next-test-btn" style="display: none;">
+                    Следующий вопрос
+                </button>
+            </div>
+
+            <!-- ПРАВОПИСАНИЕ -->
+            <div class="card hidden" id="typing-section">
+                <h3 style="margin-bottom: 20px; text-align: center;">⌨️ Правописание</h3>
+                <div class="translation-display" id="typing-question"></div>
+                <input type="text" class="typing-input" id="typing-answer" placeholder="Введите английское слово...">
+                <button class="btn" onclick="checkTypingAnswer()">Проверить</button>
+                <div style="text-align: center; margin-top: 15px;">
+                    <button class="btn-secondary" onclick="skipTypingWord()">Пропустить</button>
                 </div>
-                <div class="mode-btn" onclick="setMode('hangman')">
-                    🎮 Виселица
+            </div>
+
+            <!-- ВИСЕЛИЦА -->
+            <div class="card hidden" id="hangman-section">
+                <h3 style="margin-bottom: 20px; text-align: center;">🎮 Виселица</h3>
+                <div style="text-align: center; margin: 15px 0; font-size: 14px; color: #666;">
+                    Ошибок: <span id="hangman-errors">0/6</span> | Слово: <span id="hangman-category"></span>
+                </div>
+                <div class="hangman-display" id="hangman-display"></div>
+                <div class="alphabet-grid" id="alphabet-grid">
+                    <!-- Буквы появятся здесь -->
+                </div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn" onclick="startHangmanGame()">
+                        <i class="fas fa-play"></i> Новая игра
+                    </button>
+                    <button class="btn-secondary" onclick="showHangmanHint()" style="margin-top: 10px;">
+                        <i class="fas fa-lightbulb"></i> Подсказка
+                    </button>
                 </div>
             </div>
         </div>
-        
-        <!-- ДОСТИЖЕНИЯ -->
-        <div class="card hidden" id="achievements-section">
-            <h3 style="margin-bottom: 15px; text-align: center;">🏆 Достижения</h3>
-            <div id="achievements-list">
-                <!-- Достижения появятся здесь -->
+
+        <!-- ВКЛАДКА: СЛОВАРЬ -->
+        <div id="dictionary-tab" class="tab-content hidden">
+            <div class="card">
+                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <input type="text" id="search-word" placeholder="🔍 Поиск слова..." style="flex: 1; padding: 12px; border: 2px solid #667eea; border-radius: 12px;">
+                    <select id="filter-category" style="padding: 12px; border: 2px solid #667eea; border-radius: 12px;">
+                        <option value="all">Все темы</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <button class="btn-secondary" onclick="filterWords('known')" style="flex: 1;">
+                        Знаю
+                    </button>
+                    <button class="btn-secondary" onclick="filterWords('review')" style="flex: 1;">
+                        Повтор
+                    </button>
+                    <button class="btn-secondary" onclick="filterWords('new')" style="flex: 1;">
+                        Новые
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 15px; text-align: center;">📖 Ваш словарь</h3>
+                <div class="word-list-container" id="word-list">
+                    <!-- Слова появятся здесь -->
+                </div>
+                <div style="text-align: center; margin-top: 15px; color: #666; font-size: 13px;">
+                    Всего слов: <span id="total-words-count">0</span>
+                </div>
             </div>
         </div>
-        
-        <!-- СЛОВАРЬ -->
-        <div class="card">
-            <h3 style="margin-bottom: 15px; text-align: center;">📖 Мой словарь</h3>
-            <div id="word-list" style="max-height: 200px; overflow-y: auto;">
-                <!-- Слова будут здесь -->
+
+        <!-- ВКЛАДКА: ПРОФИЛЬ -->
+        <div id="profile-tab" class="tab-content hidden">
+            <div class="profile-header">
+                <div class="avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h2 id="profile-username">Ученик</h2>
+                <p style="color: #666; margin-top: 5px;" id="profile-level">Уровень 1 • 0 XP</p>
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
-                <button class="btn btn-small" onclick="showAllWords()">
-                    📋 Все слова
-                </button>
-                <button class="btn btn-small" onclick="showAchievements()" style="background: #9C27B0;">
-                    🏆 Достижения
-                </button>
+
+            <div class="card">
+                <h3 style="margin-bottom: 20px; text-align: center;">📈 Статистика</h3>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-number" id="profile-total">0</div>
+                        <div class="stat-label">Всего слов</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="profile-known">0</div>
+                        <div class="stat-label">Выучено</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="profile-streak">0</div>
+                        <div class="stat-label">Дней подряд</div>
+                    </div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-number" id="profile-tests">0</div>
+                        <div class="stat-label">Тестов пройдено</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="profile-hangman">0</div>
+                        <div class="stat-label">Игр выиграно</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="profile-accuracy">0%</div>
+                        <div class="stat-label">Точность</div>
+                    </div>
+                </div>
+
+                <div class="progress-container" style="margin-top: 20px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span>Прогресс до следующего уровня</span>
+                        <span id="level-progress-text">0/100</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="level-progress-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 15px; text-align: center;">🏆 Достижения</h3>
+                <div id="achievements-list">
+                    <!-- Достижения появятся здесь -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ВКЛАДКА: НАСТРОЙКИ -->
+        <div id="settings-tab" class="tab-content hidden">
+            <div class="card">
+                <h3 style="margin-bottom: 20px; text-align: center;">⚙️ Настройки</h3>
+                
+                <div class="settings-item">
+                    <span><i class="fas fa-moon"></i> Тёмная тема</span>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div style="margin: 20px 0;">
+                    <div style="font-weight: 600; margin-bottom: 10px;">Цвет темы</div>
+                    <div class="theme-selector">
+                        <div class="theme-btn active" style="background: #667eea;" onclick="setThemeColor('#667eea')">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="theme-btn" style="background: #4CAF50;" onclick="setThemeColor('#4CAF50')">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="theme-btn" style="background: #FF9800;" onclick="setThemeColor('#FF9800')">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="theme-btn" style="background: #9C27B0;" onclick="setThemeColor('#9C27B0')">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin: 20px 0;">
+                    <div style="font-weight: 600; margin-bottom: 10px;">Уровень сложности</div>
+                    <div class="difficulty-selector">
+                        <div class="difficulty-btn active" onclick="setDifficulty('beginner')">
+                            Новичок
+                        </div>
+                        <div class="difficulty-btn" onclick="setDifficulty('intermediate')">
+                            Средний
+                        </div>
+                        <div class="difficulty-btn" onclick="setDifficulty('advanced')">
+                            Продвинутый
+                        </div>
+                    </div>
+                    <div style="font-size: 12px; color: #666; margin-top: 10px; text-align: center;" id="difficulty-description">
+                        500 базовых слов
+                    </div>
+                </div>
+
+                <div class="settings-item">
+                    <span><i class="fas fa-volume-up"></i> Звук</span>
+                    <label class="switch">
+                        <input type="checkbox" id="sound-toggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="settings-item">
+                    <span><i class="fas fa-bell"></i> Уведомления</span>
+                    <label class="switch">
+                        <input type="checkbox" id="notifications-toggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div style="margin: 25px 0;">
+                    <button class="btn" onclick="exportData()">
+                        <i class="fas fa-download"></i> Экспорт данных
+                    </button>
+                    <button class="btn btn-secondary" onclick="importData()" style="margin-top: 10px;">
+                        <i class="fas fa-upload"></i> Импорт данных
+                    </button>
+                    <button class="btn" onclick="resetProgress()" style="background: #f44336; margin-top: 10px;">
+                        <i class="fas fa-redo"></i> Сбросить прогресс
+                    </button>
+                </div>
+
+                <div style="text-align: center; margin-top: 20px; color: #666; font-size: 12px;">
+                    English PRO v3.0<br>
+                    Слов в базе: <span id="vocab-count">1000+</span>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- ИНПУТ ДЛЯ ИМПОРТА -->
+    <input type="file" id="import-file" accept=".json" style="display: none;">
+
     <script>
-        // ==================== БАЗА ДАННЫХ СЛОВ (200+ СЛОВ) ====================
-        const vocabulary = [
-            // Уровень 1 (A1) - 50 слов
-            { en: "hello", ru: "привет", category: "Основы", level: 1 },
-            { en: "goodbye", ru: "до свидания", category: "Основы", level: 1 },
-            { en: "thank you", ru: "спасибо", category: "Основы", level: 1 },
-            { en: "please", ru: "пожалуйста", category: "Основы", level: 1 },
-            { en: "yes", ru: "да", category: "Основы", level: 1 },
-            { en: "no", ru: "нет", category: "Основы", level: 1 },
-            { en: "cat", ru: "кот", category: "Животные", level: 1 },
-            { en: "dog", ru: "собака", category: "Животные", level: 1 },
-            { en: "house", ru: "дом", category: "Дом", level: 1 },
-            { en: "car", ru: "машина", category: "Транспорт", level: 1 },
-            { en: "book", ru: "книга", category: "Образование", level: 1 },
-            { en: "pen", ru: "ручка", category: "Образование", level: 1 },
-            { en: "water", ru: "вода", category: "Еда", level: 1 },
-            { en: "food", ru: "еда", category: "Еда", level: 1 },
-            { en: "man", ru: "мужчина", category: "Люди", level: 1 },
-            { en: "woman", ru: "женщина", category: "Люди", level: 1 },
-            { en: "child", ru: "ребёнок", category: "Люди", level: 1 },
-            { en: "day", ru: "день", category: "Время", level: 1 },
-            { en: "night", ru: "ночь", category: "Время", level: 1 },
-            { en: "sun", ru: "солнце", category: "Природа", level: 1 },
-            { en: "moon", ru: "луна", category: "Природа", level: 1 },
-            { en: "star", ru: "звезда", category: "Природа", level: 1 },
-            { en: "tree", ru: "дерево", category: "Природа", level: 1 },
-            { en: "flower", ru: "цветок", category: "Природа", level: 1 },
-            { en: "time", ru: "время", category: "Абстрактное", level: 1 },
-            { en: "love", ru: "любовь", category: "Абстрактное", level: 1 },
-            { en: "friend", ru: "друг", category: "Люди", level: 1 },
-            { en: "family", ru: "семья", category: "Люди", level: 1 },
-            { en: "home", ru: "дом", category: "Дом", level: 1 },
-            { en: "school", ru: "школа", category: "Образование", level: 1 },
-            { en: "work", ru: "работа", category: "Работа", level: 1 },
-            { en: "city", ru: "город", category: "Места", level: 1 },
-            { en: "country", ru: "страна", category: "Места", level: 1 },
-            { en: "world", ru: "мир", category: "Места", level: 1 },
-            { en: "life", ru: "жизнь", category: "Абстрактное", level: 1 },
-            { en: "year", ru: "год", category: "Время", level: 1 },
-            { en: "month", ru: "месяц", category: "Время", level: 1 },
-            { en: "week", ru: "неделя", category: "Время", level: 1 },
-            { en: "hour", ru: "час", category: "Время", level: 1 },
-            { en: "minute", ru: "минута", category: "Время", level: 1 },
-            { en: "second", ru: "секунда", category: "Время", level: 1 },
-            { en: "money", ru: "деньги", category: "Финансы", level: 1 },
-            { en: "price", ru: "цена", category: "Финансы", level: 1 },
-            { en: "name", ru: "имя", category: "Основы", level: 1 },
-            { en: "age", ru: "возраст", category: "Люди", level: 1 },
-            { en: "color", ru: "цвет", category: "Основы", level: 1 },
-            { en: "red", ru: "красный", category: "Цвета", level: 1 },
-            { en: "blue", ru: "синий", category: "Цвета", level: 1 },
-            { en: "green", ru: "зелёный", category: "Цвета", level: 1 },
-            { en: "yellow", ru: "жёлтый", category: "Цвета", level: 1 },
-            
-            // Уровень 2 (A2) - 50 слов
-            { en: "beautiful", ru: "красивый", category: "Прилагательные", level: 2 },
-            { en: "interesting", ru: "интересный", category: "Прилагательные", level: 2 },
-            { en: "difficult", ru: "сложный", category: "Прилагательные", level: 2 },
-            { en: "easy", ru: "лёгкий", category: "Прилагательные", level: 2 },
-            { en: "important", ru: "важный", category: "Прилагательные", level: 2 },
-            { en: "different", ru: "разный", category: "Прилагательные", level: 2 },
-            { en: "computer", ru: "компьютер", category: "Технологии", level: 2 },
-            { en: "phone", ru: "телефон", category: "Технологии", level: 2 },
-            { en: "internet", ru: "интернет", category: "Технологии", level: 2 },
-            { en: "music", ru: "музыка", category: "Искусство", level: 2 },
-            { en: "movie", ru: "фильм", category: "Искусство", level: 2 },
-            { en: "game", ru: "игра", category: "Развлечения", level: 2 },
-            { en: "sport", ru: "спорт", category: "Развлечения", level: 2 },
-            { en: "health", ru: "здоровье", category: "Здоровье", level: 2 },
-            { en: "doctor", ru: "врач", category: "Профессии", level: 2 },
-            { en: "teacher", ru: "учитель", category: "Профессии", level: 2 },
-            { en: "student", ru: "студент", category: "Образование", level: 2 },
-            { en: "language", ru: "язык", category: "Образование", level: 2 },
-            { en: "english", ru: "английский", category: "Языки", level: 2 },
-            { en: "russian", ru: "русский", category: "Языки", level: 2 },
-            { en: "travel", ru: "путешествие", category: "Путешествия", level: 2 },
-            { en: "hotel", ru: "отель", category: "Путешествия", level: 2 },
-            { en: "airport", ru: "аэропорт", category: "Транспорт", level: 2 },
-            { en: "station", ru: "станция", category: "Транспорт", level: 2 },
-            { en: "train", ru: "поезд", category: "Транспорт", level: 2 },
-            { en: "bus", ru: "автобус", category: "Транспорт", level: 2 },
-            { en: "plane", ru: "самолёт", category: "Транспорт", level: 2 },
-            { en: "ship", ru: "корабль", category: "Транспорт", level: 2 },
-            { en: "weather", ru: "погода", category: "Природа", level: 2 },
-            { en: "rain", ru: "дождь", category: "Природа", level: 2 },
-            { en: "snow", ru: "снег", category: "Природа", level: 2 },
-            { en: "wind", ru: "ветер", category: "Природа", level: 2 },
-            { en: "cloud", ru: "облако", category: "Природа", level: 2 },
-            { en: "sky", ru: "небо", category: "Природа", level: 2 },
-            { en: "sea", ru: "море", category: "Природа", level: 2 },
-            { en: "river", ru: "река", category: "Природа", level: 2 },
-            { en: "mountain", ru: "гора", category: "Природа", level: 2 },
-            { en: "forest", ru: "лес", category: "Природа", level: 2 },
-            { en: "animal", ru: "животное", category: "Животные", level: 2 },
-            { en: "bird", ru: "птица", category: "Животные", level: 2 },
-            { en: "fish", ru: "рыба", category: "Животные", level: 2 },
-            { en: "horse", ru: "лошадь", category: "Животные", level: 2 },
-            { en: "cow", ru: "корова", category: "Животные", level: 2 },
-            { en: "chicken", ru: "курица", category: "Животные", level: 2 },
-            { en: "bread", ru: "хлеб", category: "Еда", level: 2 },
-            { en: "milk", ru: "молоко", category: "Еда", level: 2 },
-            { en: "meat", ru: "мясо", category: "Еда", level: 2 },
-            { en: "fruit", ru: "фрукт", category: "Еда", level: 2 },
-            { en: "vegetable", ru: "овощ", category: "Еда", level: 2 },
-            
-            // Уровень 3 (B1) - 50 слов
-            { en: "environment", ru: "окружающая среда", category: "Природа", level: 3 },
-            { en: "opportunity", ru: "возможность", category: "Абстрактное", level: 3 },
-            { en: "experience", ru: "опыт", category: "Абстрактное", level: 3 },
-            { en: "knowledge", ru: "знание", category: "Абстрактное", level: 3 },
-            { en: "government", ru: "правительство", category: "Общество", level: 3 },
-            { en: "education", ru: "образование", category: "Образование", level: 3 },
-            { en: "university", ru: "университет", category: "Образование", level: 3 },
-            { en: "business", ru: "бизнес", category: "Работа", level: 3 },
-            { en: "company", ru: "компания", category: "Работа", level: 3 },
-            { en: "product", ru: "продукт", category: "Бизнес", level: 3 },
-            { en: "service", ru: "услуга", category: "Бизнес", level: 3 },
-            { en: "customer", ru: "клиент", category: "Бизнес", level: 3 },
-            { en: "price", ru: "цена", category: "Бизнес", level: 3 },
-            { en: "quality", ru: "качество", category: "Бизнес", level: 3 },
-            { en: "development", ru: "развитие", category: "Абстрактное", level: 3 },
-            { en: "technology", ru: "технология", category: "Технологии", level: 3 },
-            { en: "software", ru: "программное обеспечение", category: "Технологии", level: 3 },
-            { en: "hardware", ru: "аппаратное обеспечение", category: "Технологии", level: 3 },
-            { en: "network", ru: "сеть", category: "Технологии", level: 3 },
-            { en: "security", ru: "безопасность", category: "Абстрактное", level: 3 },
-            { en: "privacy", ru: "конфиденциальность", category: "Абстрактное", level: 3 },
-            { en: "freedom", ru: "свобода", category: "Абстрактное", level: 3 },
-            { en: "justice", ru: "справедливость", category: "Абстрактное", level: 3 },
-            { en: "democracy", ru: "демократия", category: "Общество", level: 3 },
-            { en: "economy", ru: "экономика", category: "Общество", level: 3 },
-            { en: "culture", ru: "культура", category: "Общество", level: 3 },
-            { en: "tradition", ru: "традиция", category: "Общество", level: 3 },
-            { en: "religion", ru: "религия", category: "Общество", level: 3 },
-            { en: "science", ru: "наука", category: "Образование", level: 3 },
-            { en: "research", ru: "исследование", category: "Образование", level: 3 },
-            { en: "discovery", ru: "открытие", category: "Образование", level: 3 },
-            { en: "invention", ru: "изобретение", category: "Образование", level: 3 },
-            { en: "medicine", ru: "медицина", category: "Здоровье", level: 3 },
-            { en: "treatment", ru: "лечение", category: "Здоровье", level: 3 },
-            { en: "surgery", ru: "хирургия", category: "Здоровье", level: 3 },
-            { en: "vaccine", ru: "вакцина", category: "Здоровье", level: 3 },
-            { en: "energy", ru: "энергия", category: "Природа", level: 3 },
-            { en: "resource", ru: "ресурс", category: "Природа", level: 3 },
-            { en: "pollution", ru: "загрязнение", category: "Природа", level: 3 },
-            { en: "recycling", ru: "переработка", category: "Природа", level: 3 },
-            { en: "sustainability", ru: "устойчивость", category: "Природа", level: 3 },
-            { en: "architecture", ru: "архитектура", category: "Искусство", level: 3 },
-            { en: "literature", ru: "литература", category: "Искусство", level: 3 },
-            { en: "painting", ru: "живопись", category: "Искусство", level: 3 },
-            { en: "sculpture", ru: "скульптура", category: "Искусство", level: 3 },
-            { en: "photography", ru: "фотография", category: "Искусство", level: 3 },
-            { en: "cinema", ru: "кино", category: "Искусство", level: 3 },
-            { en: "theater", ru: "театр", category: "Искусство", level: 3 },
-            { en: "orchestra", ru: "оркестр", category: "Искусство", level: 3 },
-            
-            // Уровень 4 (B2) - 50 слов
-            { en: "philosophy", ru: "философия", category: "Образование", level: 4 },
-            { en: "psychology", ru: "психология", category: "Образование", level: 4 },
-            { en: "sociology", ru: "социология", category: "Образование", level: 4 },
-            { en: "anthropology", ru: "антропология", category: "Образование", level: 4 },
-            { en: "archaeology", ru: "археология", category: "Образование", level: 4 },
-            { en: "astronomy", ru: "астрономия", category: "Образование", level: 4 },
-            { en: "biology", ru: "биология", category: "Образование", level: 4 },
-            { en: "chemistry", ru: "химия", category: "Образование", level: 4 },
-            { en: "physics", ru: "физика", category: "Образование", level: 4 },
-            { en: "mathematics", ru: "математика", category: "Образование", level: 4 },
-            { en: "statistics", ru: "статистика", category: "Образование", level: 4 },
-            { en: "engineering", ru: "инженерия", category: "Технологии", level: 4 },
-            { en: "architecture", ru: "архитектура", category: "Технологии", level: 4 },
-            { en: "biotechnology", ru: "биотехнология", category: "Технологии", level: 4 },
-            { en: "nanotechnology", ru: "нанотехнология", category: "Технологии", level: 4 },
-            { en: "robotics", ru: "робототехника", category: "Технологии", level: 4 },
-            { en: "artificial intelligence", ru: "искусственный интеллект", category: "Технологии", level: 4 },
-            { en: "machine learning", ru: "машинное обучение", category: "Технологии", level: 4 },
-            { en: "blockchain", ru: "блокчейн", category: "Технологии", level: 4 },
-            { en: "cryptocurrency", ru: "криптовалюта", category: "Финансы", level: 4 },
-            { en: "globalization", ru: "глобализация", category: "Общество", level: 4 },
-            { en: "urbanization", ru: "урбанизация", category: "Общество", level: 4 },
-            { en: "industrialization", ru: "индустриализация", category: "Общество", level: 4 },
-            { en: "modernization", ru: "модернизация", category: "Общество", level: 4 },
-            { en: "digitalization", ru: "цифровизация", category: "Технологии", level: 4 },
-            { en: "innovation", ru: "инновация", category: "Бизнес", level: 4 },
-            { en: "entrepreneurship", ru: "предпринимательство", category: "Бизнес", level: 4 },
-            { en: "leadership", ru: "лидерство", category: "Бизнес", level: 4 },
-            { en: "management", ru: "управление", category: "Бизнес", level: 4 },
-            { en: "marketing", ru: "маркетинг", category: "Бизнес", level: 4 },
-            { en: "advertising", ru: "реклама", category: "Бизнес", level: 4 },
-            { en: "branding", ru: "брендинг", category: "Бизнес", level: 4 },
-            { en: "logistics", ru: "логистика", category: "Бизнес", level: 4 },
-            { en: "infrastructure", ru: "инфраструктура", category: "Общество", level: 4 },
-            { en: "transportation", ru: "транспортировка", category: "Транспорт", level: 4 },
-            { en: "communication", ru: "коммуникация", category: "Общение", level: 4 },
-            { en: "negotiation", ru: "переговоры", category: "Общение", level: 4 },
-            { en: "collaboration", ru: "сотрудничество", category: "Общение", level: 4 },
-            { en: "cooperation", ru: "кооперация", category: "Общение", level: 4 },
-            { en: "competition", ru: "конкуренция", category: "Бизнес", level: 4 },
-            { en: "productivity", ru: "продуктивность", category: "Бизнес", level: 4 },
-            { en: "efficiency", ru: "эффективность", category: "Бизнес", level: 4 },
-            { en: "effectiveness", ru: "результативность", category: "Бизнес", level: 4 },
-            { en: "optimization", ru: "оптимизация", category: "Бизнес", level: 4 },
-            { en: "standardization", ru: "стандартизация", category: "Бизнес", level: 4 },
-            { en: "certification", ru: "сертификация", category: "Бизнес", level: 4 },
-            { en: "accreditation", ru: "аккредитация", category: "Образование", level: 4 },
-            { en: "qualification", ru: "квалификация", category: "Образование", level: 4 },
-            { en: "specialization", ru: "специализация", category: "Образование", level: 4 }
-        ];
-
-        // ==================== ДОСТИЖЕНИЯ ====================
-        const achievements = [
-            { id: 'first_word', name: 'Первое слово', description: 'Выучи первое слово', icon: '🎯', xp: 10 },
-            { id: '10_words', name: 'Десяточка', description: 'Выучи 10 слов', icon: '🔟', xp: 50 },
-            { id: '50_words', name: 'Полтинник', description: 'Выучи 50 слов', icon: '5️⃣0️⃣', xp: 100 },
-            { id: '100_words', name: 'Сотня', description: 'Выучи 100 слов', icon: '💯', xp: 200 },
-            { id: '3_day_streak', name: 'Терпеливый', description: '3 дня подряд', icon: '📅', xp: 30 },
-            { id: '7_day_streak', name: 'Недельный марафон', description: '7 дней подряд', icon: '🏆', xp: 100 },
-            { id: '30_day_streak', name: 'Месяц дисциплины', description: '30 дней подряд', icon: '🎖️', xp: 500 },
-            { id: 'hangman_winner', name: 'Победитель', description: 'Выиграй в Виселицу', icon: '🎮', xp: 50 },
-            { id: 'perfect_test', name: 'Отличник', description: 'Пройди тест без ошибок', icon: '⭐', xp: 75 },
-            { id: 'fast_learner', name: 'Быстрый ученик', description: 'Выучи 20 слов за день', icon: '⚡', xp: 150 }
-        ];
-
-        // ==================== ПЕРЕМЕННЫЕ ====================
-        let currentWordIndex = 0;
-        let learnedWords = [];
-        let todayWords = [];
-        let streak = 0;
-        let currentMode = 'cards';
-        let userXP = 0;
-        let userLevel = 1;
+        // ==================== КОНСТАНТЫ И НАСТРОЙКИ ====================
+        const APP_VERSION = '3.0';
         
-        // Переменные для игры Виселица
-        let hangmanWord = '';
-        let hangmanDisplay = [];
-        let hangmanRemaining = 6;
-        let usedLetters = [];
-        let hangmanWords = [
-            "APPLE", "HOUSE", "TIGER", "WATER", "MONEY",
-            "SMILE", "PHONE", "MUSIC", "BRAIN", "CLOUD",
-            "EARTH", "OCEAN", "FOREST", "RABBIT", "TURTLE",
-            "BUTTERFLY", "ELEPHANT", "KANGAROO", "CHOCOLATE", "BASKETBALL"
-        ];
+        // Инициализация Telegram
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.enableClosingConfirmation();
+        
+        // Уникальный ID пользователя для изоляции данных
+        const userId = tg.initDataUnsafe?.user?.id || 'anonymous_' + Math.random().toString(36).substr(2, 9);
+        const username = tg.initDataUnsafe?.user?.first_name || 'Ученик';
+        
+        // Проверка версии
+        if (localStorage.getItem('app_version_' + userId) !== APP_VERSION) {
+            localStorage.setItem('app_version_' + userId, APP_VERSION);
+        }
+
+        // ==================== БАЗА СЛОВ (1000+ СЛОВ) ====================
+        // Полная база слов сгруппирована по темам и уровням
+        const vocabulary = {
+            // Уровень 1 (A1 - Новичок)
+            beginner: [
+                // Основные глаголы
+                { en: "be", ru: "быть", category: "Глаголы", level: 1 },
+                { en: "have", ru: "иметь", category: "Глаголы", level: 1 },
+                { en: "do", ru: "делать", category: "Глаголы", level: 1 },
+                { en: "say", ru: "говорить", category: "Глаголы", level: 1 },
+                { en: "get", ru: "получать", category: "Глаголы", level: 1 },
+                { en: "make", ru: "делать", category: "Глаголы", level: 1 },
+                { en: "go", ru: "идти", category: "Глаголы", level: 1 },
+                { en: "know", ru: "знать", category: "Глаголы", level: 1 },
+                { en: "think", ru: "думать", category: "Глаголы", level: 1 },
+                { en: "take", ru: "брать", category: "Глаголы", level: 1 },
+                { en: "see", ru: "видеть", category: "Глаголы", level: 1 },
+                { en: "come", ru: "приходить", category: "Глаголы", level: 1 },
+                { en: "want", ru: "хотеть", category: "Глаголы", level: 1 },
+                { en: "look", ru: "смотреть", category: "Глаголы", level: 1 },
+                { en: "use", ru: "использовать", category: "Глаголы", level: 1 },
+                { en: "find", ru: "находить", category: "Глаголы", level: 1 },
+                { en: "give", ru: "давать", category: "Глаголы", level: 1 },
+                { en: "tell", ru: "рассказывать", category: "Глаголы", level: 1 },
+                { en: "work", ru: "работать", category: "Глаголы", level: 1 },
+                { en: "call", ru: "звонить", category: "Глаголы", level: 1 },
+                
+                // Основные существительные
+                { en: "time", ru: "время", category: "Основы", level: 1 },
+                { en: "person", ru: "человек", category: "Основы", level: 1 },
+                { en: "year", ru: "год", category: "Основы", level: 1 },
+                { en: "day", ru: "день", category: "Основы", level: 1 },
+                { en: "thing", ru: "вещь", category: "Основы", level: 1 },
+                { en: "man", ru: "мужчина", category: "Основы", level: 1 },
+                { en: "world", ru: "мир", category: "Основы", level: 1 },
+                { en: "life", ru: "жизнь", category: "Основы", level: 1 },
+                { en: "hand", ru: "рука", category: "Тело", level: 1 },
+                { en: "eye", ru: "глаз", category: "Тело", level: 1 },
+                { en: "head", ru: "голова", category: "Тело", level: 1 },
+                { en: "house", ru: "дом", category: "Дом", level: 1 },
+                { en: "room", ru: "комната", category: "Дом", level: 1 },
+                { en: "door", ru: "дверь", category: "Дом", level: 1 },
+                { en: "window", ru: "окно", category: "Дом", level: 1 },
+                { en: "table", ru: "стол", category: "Дом", level: 1 },
+                { en: "chair", ru: "стул", category: "Дом", level: 1 },
+                { en: "bed", ru: "кровать", category: "Дом", level: 1 },
+                { en: "water", ru: "вода", category: "Еда", level: 1 },
+                { en: "food", ru: "еда", category: "Еда", level: 1 },
+                { en: "bread", ru: "хлеб", category: "Еда", level: 1 },
+                { en: "milk", ru: "молоко", category: "Еда", level: 1 },
+                { en: "egg", ru: "яйцо", category: "Еда", level: 1 },
+                { en: "meat", ru: "мясо", category: "Еда", level: 1 },
+                { en: "apple", ru: "яблоко", category: "Фрукты", level: 1 },
+                { en: "banana", ru: "банан", category: "Фрукты", level: 1 },
+                { en: "orange", ru: "апельсин", category: "Фрукты", level: 1 },
+                { en: "car", ru: "машина", category: "Транспорт", level: 1 },
+                { en: "bus", ru: "автобус", category: "Транспорт", level: 1 },
+                { en: "train", ru: "поезд", category: "Транспорт", level: 1 },
+                { en: "plane", ru: "самолет", category: "Транспорт", level: 1 },
+                
+                // Прилагательные
+                { en: "good", ru: "хороший", category: "Прилагательные", level: 1 },
+                { en: "bad", ru: "плохой", category: "Прилагательные", level: 1 },
+                { en: "big", ru: "большой", category: "Прилагательные", level: 1 },
+                { en: "small", ru: "маленький", category: "Прилагательные", level: 1 },
+                { en: "hot", ru: "горячий", category: "Прилагательные", level: 1 },
+                { en: "cold", ru: "холодный", category: "Прилагательные", level: 1 },
+                { en: "new", ru: "новый", category: "Прилагательные", level: 1 },
+                { en: "old", ru: "старый", category: "Прилагательные", level: 1 },
+                { en: "young", ru: "молодой", category: "Прилагательные", level: 1 },
+                { en: "beautiful", ru: "красивый", category: "Прилагательные", level: 1 },
+                { en: "happy", ru: "счастливый", category: "Прилагательные", level: 1 },
+                { en: "sad", ru: "грустный", category: "Прилагательные", level: 1 },
+                { en: "fast", ru: "быстрый", category: "Прилагательные", level: 1 },
+                { en: "slow", ru: "медленный", category: "Прилагательные", level: 1 },
+                { en: "easy", ru: "легкий", category: "Прилагательные", level: 1 },
+                { en: "difficult", ru: "сложный", category: "Прилагательные", level: 1 },
+                { en: "important", ru: "важный", category: "Прилагательные", level: 1 },
+                { en: "right", ru: "правый/правильный", category: "Прилагательные", level: 1 },
+                { en: "left", ru: "левый", category: "Прилагательные", level: 1 },
+                { en: "high", ru: "высокий", category: "Прилагательные", level: 1 },
+                { en: "low", ru: "низкий", category: "Прилагательные", level: 1 },
+                { en: "long", ru: "длинный", category: "Прилагательные", level: 1 },
+                { en: "short", ru: "короткий", category: "Прилагательные", level: 1 },
+                { en: "heavy", ru: "тяжелый", category: "Прилагательные", level: 1 },
+                { en: "light", ru: "легкий/светлый", category: "Прилагательные", level: 1 },
+                { en: "dark", ru: "темный", category: "Прилагательные", level: 1 },
+                { en: "clean", ru: "чистый", category: "Прилагательные", level: 1 },
+                { en: "dirty", ru: "грязный", category: "Прилагательные", level: 1 },
+                { en: "rich", ru: "богатый", category: "Прилагательные", level: 1 },
+                { en: "poor", ru: "бедный", category: "Прилагательные", level: 1 },
+                { en: "strong", ru: "сильный", category: "Прилагательные", level: 1 },
+                { en: "weak", ru: "слабый", category: "Прилагательные", level: 1 },
+                { en: "healthy", ru: "здоровый", category: "Прилагательные", level: 1 },
+                { en: "sick", ru: "больной", category: "Прилагательные", level: 1 },
+                { en: "free", ru: "свободный", category: "Прилагательные", level: 1 },
+                { en: "busy", ru: "занятый", category: "Прилагательные", level: 1 },
+                { en: "open", ru: "открытый", category: "Прилагательные", level: 1 },
+                { en: "closed", ru: "закрытый", category: "Прилагательные", level: 1 },
+                { en: "full", ru: "полный", category: "Прилагательные", level: 1 },
+                { en: "empty", ru: "пустой", category: "Прилагательные", level: 1 },
+                { en: "true", ru: "правдивый", category: "Прилагательные", level: 1 },
+                { en: "false", ru: "ложный", category: "Прилагательные", level: 1 },
+                { en: "same", ru: "одинаковый", category: "Прилагательные", level: 1 },
+                { en: "different", ru: "разный", category: "Прилагательные", level: 1 },
+                { en: "early", ru: "ранний", category: "Прилагательные", level: 1 },
+                { en: "late", ru: "поздний", category: "Прилагательные", level: 1 },
+                
+                // Местоимения и основы
+                { en: "I", ru: "я", category: "Основы", level: 1 },
+                { en: "you", ru: "ты/вы", category: "Основы", level: 1 },
+                { en: "he", ru: "он", category: "Основы", level: 1 },
+                { en: "she", ru: "она", category: "Основы", level: 1 },
+                { en: "it", ru: "оно", category: "Основы", level: 1 },
+                { en: "we", ru: "мы", category: "Основы", level: 1 },
+                { en: "they", ru: "они", category: "Основы", level: 1 },
+                { en: "my", ru: "мой", category: "Основы", level: 1 },
+                { en: "your", ru: "твой", category: "Основы", level: 1 },
+                { en: "his", ru: "его", category: "Основы", level: 1 },
+                { en: "her", ru: "её", category: "Основы", level: 1 },
+                { en: "our", ru: "наш", category: "Основы", level: 1 },
+                { en: "their", ru: "их", category: "Основы", level: 1 },
+                { en: "this", ru: "этот", category: "Основы", level: 1 },
+                { en: "that", ru: "тот", category: "Основы", level: 1 },
+                { en: "here", ru: "здесь", category: "Основы", level: 1 },
+                { en: "there", ru: "там", category: "Основы", level: 1 },
+                { en: "who", ru: "кто", category: "Основы", level: 1 },
+                { en: "what", ru: "что", category: "Основы", level: 1 },
+                { en: "where", ru: "где", category: "Основы", level: 1 },
+                { en: "when", ru: "когда", category: "Основы", level: 1 },
+                { en: "why", ru: "почему", category: "Основы", level: 1 },
+                { en: "how", ru: "как", category: "Основы", level: 1 },
+                { en: "yes", ru: "да", category: "Основы", level: 1 },
+                { en: "no", ru: "нет", category: "Основы", level: 1 },
+                { en: "not", ru: "не", category: "Основы", level: 1 },
+                { en: "hello", ru: "привет", category: "Основы", level: 1 },
+                { en: "goodbye", ru: "до свидания", category: "Основы", level: 1 },
+                { en: "please", ru: "пожалуйста", category: "Основы", level: 1 },
+                { en: "thank you", ru: "спасибо", category: "Основы", level: 1 },
+                { en: "sorry", ru: "извините", category: "Основы", level: 1 },
+                { en: "excuse me", ru: "простите", category: "Основы", level: 1 }
+            ],
+
+            // Уровень 2 (A2 - Средний)
+            intermediate: [
+                // Более сложные глаголы
+                { en: "understand", ru: "понимать", category: "Глаголы", level: 2 },
+                { en: "believe", ru: "верить", category: "Глаголы", level: 2 },
+                { en: "remember", ru: "помнить", category: "Глаголы", level: 2 },
+                { en: "forget", ru: "забывать", category: "Глаголы", level: 2 },
+                { en: "learn", ru: "учить", category: "Глаголы", level: 2 },
+                { en: "study", ru: "учиться", category: "Глаголы", level: 2 },
+                { en: "teach", ru: "учить", category: "Глаголы", level: 2 },
+                { en: "explain", ru: "объяснять", category: "Глаголы", level: 2 },
+                { en: "show", ru: "показывать", category: "Глаголы", level: 2 },
+                { en: "help", ru: "помогать", category: "Глаголы", level: 2 },
+                { en: "try", ru: "пытаться", category: "Глаголы", level: 2 },
+                { en: "start", ru: "начинать", category: "Глаголы", level: 2 },
+                { en: "finish", ru: "заканчивать", category: "Глаголы", level: 2 },
+                { en: "stop", ru: "останавливать", category: "Глаголы", level: 2 },
+                { en: "continue", ru: "продолжать", category: "Глаголы", level: 2 },
+                { en: "change", ru: "менять", category: "Глаголы", level: 2 },
+                { en: "grow", ru: "расти", category: "Глаголы", level: 2 },
+                { en: "build", ru: "строить", category: "Глаголы", level: 2 },
+                { en: "create", ru: "создавать", category: "Глаголы", level: 2 },
+                { en: "destroy", ru: "разрушать", category: "Глаголы", level: 2 },
+                { en: "save", ru: "сохранять", category: "Глаголы", level: 2 },
+                { en: "spend", ru: "тратить", category: "Глаголы", level: 2 },
+                { en: "earn", ru: "зарабатывать", category: "Глаголы", level: 2 },
+                { en: "win", ru: "выигрывать", category: "Глаголы", level: 2 },
+                { en: "lose", ru: "проигрывать", category: "Глаголы", level: 2 },
+                { en: "buy", ru: "покупать", category: "Глаголы", level: 2 },
+                { en: "sell", ru: "продавать", category: "Глаголы", level: 2 },
+                { en: "pay", ru: "платить", category: "Глаголы", level: 2 },
+                { en: "cost", ru: "стоить", category: "Глаголы", level: 2 },
+                { en: "break", ru: "ломать", category: "Глаголы", level: 2 },
+                { en: "fix", ru: "чинить", category: "Глаголы", level: 2 },
+                { en: "clean", ru: "чистить", category: "Глаголы", level: 2 },
+                { en: "wash", ru: "мыть", category: "Глаголы", level: 2 },
+                { en: "cook", ru: "готовить", category: "Глаголы", level: 2 },
+                { en: "eat", ru: "есть", category: "Глаголы", level: 2 },
+                { en: "drink", ru: "пить", category: "Глаголы", level: 2 },
+                { en: "sleep", ru: "спать", category: "Глаголы", level: 2 },
+                { en: "wake", ru: "просыпаться", category: "Глаголы", level: 2 },
+                { en: "live", ru: "жить", category: "Глаголы", level: 2 },
+                { en: "die", ru: "умирать", category: "Глаголы", level: 2 },
+                { en: "meet", ru: "встречать", category: "Глаголы", level: 2 },
+                { en: "marry", ru: "жениться/выходить замуж", category: "Глаголы", level: 2 },
+                { en: "love", ru: "любить", category: "Глаголы", level: 2 },
+                { en: "hate", ru: "ненавидеть", category: "Глаголы", level: 2 },
+                { en: "like", ru: "нравиться", category: "Глаголы", level: 2 },
+                { en: "dislike", ru: "не нравиться", category: "Глаголы", level: 2 },
+                { en: "hope", ru: "надеяться", category: "Глаголы", level: 2 },
+                { en: "wish", ru: "желать", category: "Глаголы", level: 2 },
+                { en: "need", ru: "нуждаться", category: "Глаголы", level: 2 },
+                { en: "must", ru: "должен", category: "Глаголы", level: 2 },
+                { en: "should", ru: "следует", category: "Глаголы", level: 2 },
+                { en: "can", ru: "мочь", category: "Глаголы", level: 2 },
+                { en: "could", ru: "мог", category: "Глаголы", level: 2 },
+                { en: "will", ru: "буду", category: "Глаголы", level: 2 },
+                { en: "would", ru: "бы", category: "Глаголы", level: 2 },
+                { en: "may", ru: "можно", category: "Глаголы", level: 2 },
+                { en: "might", ru: "возможно", category: "Глаголы", level: 2 },
+                
+                // Существительные - профессии
+                { en: "teacher", ru: "учитель", category: "Профессии", level: 2 },
+                { en: "doctor", ru: "врач", category: "Профессии", level: 2 },
+                { en: "engineer", ru: "инженер", category: "Профессии", level: 2 },
+                { en: "lawyer", ru: "юрист", category: "Профессии", level: 2 },
+                { en: "artist", ru: "художник", category: "Профессии", level: 2 },
+                { en: "musician", ru: "музыкант", category: "Профессии", level: 2 },
+                { en: "actor", ru: "актер", category: "Профессии", level: 2 },
+                { en: "writer", ru: "писатель", category: "Профессии", level: 2 },
+                { en: "scientist", ru: "ученый", category: "Профессии", level: 2 },
+                { en: "programmer", ru: "программист", category: "Профессии", level: 2 },
+                { en: "driver", ru: "водитель", category: "Профессии", level: 2 },
+                { en: "cook", ru: "повар", category: "Профессии", level: 2 },
+                { en: "waiter", ru: "официант", category: "Профессии", level: 2 },
+                { en: "nurse", ru: "медсестра", category: "Профессии", level: 2 },
+                { en: "police", ru: "полиция", category: "Профессии", level: 2 },
+                { en: "firefighter", ru: "пожарный", category: "Профессии", level: 2 },
+                { en: "soldier", ru: "солдат", category: "Профессии", level: 2 },
+                { en: "pilot", ru: "пилот", category: "Профессии", level: 2 },
+                { en: "farmer", ru: "фермер", category: "Профессии", level: 2 },
+                { en: "businessman", ru: "бизнесмен", category: "Профессии", level: 2 },
+                
+                // Существительные - технологии
+                { en: "computer", ru: "компьютер", category: "Технологии", level: 2 },
+                { en: "phone", ru: "телефон", category: "Технологии", level: 2 },
+                { en: "internet", ru: "интернет", category: "Технологии", level: 2 },
+                { en: "website", ru: "веб-сайт", category: "Технологии", level: 2 },
+                { en: "email", ru: "электронная почта", category: "Технологии", level: 2 },
+                { en: "software", ru: "программное обеспечение", category: "Технологии", level: 2 },
+                { en: "hardware", ru: "аппаратное обеспечение", category: "Технологии", level: 2 },
+                { en: "keyboard", ru: "клавиатура", category: "Технологии", level: 2 },
+                { en: "mouse", ru: "мышь", category: "Технологии", level: 2 },
+                { en: "screen", ru: "экран", category: "Технологии", level: 2 },
+                { en: "battery", ru: "батарея", category: "Технологии", level: 2 },
+                { en: "charger", ru: "зарядное устройство", category: "Технологии", level: 2 },
+                { en: "camera", ru: "камера", category: "Технологии", level: 2 },
+                { en: "microphone", ru: "микрофон", category: "Технологии", level: 2 },
+                { en: "speaker", ru: "динамик", category: "Технологии", level: 2 },
+                { en: "headphones", ru: "наушники", category: "Технологии", level: 2 },
+                { en: "printer", ru: "принтер", category: "Технологии", level: 2 },
+                { en: "scanner", ru: "сканер", category: "Технологии", level: 2 },
+                { en: "memory", ru: "память", category: "Технологии", level: 2 },
+                { en: "processor", ru: "процессор", category: "Технологии", level: 2 },
+                
+                // Существительные - природа
+                { en: "nature", ru: "природа", category: "Природа", level: 2 },
+                { en: "forest", ru: "лес", category: "Природа", level: 2 },
+                { en: "mountain", ru: "гора", category: "Природа", level: 2 },
+                { en: "river", ru: "река", category: "Природа", level: 2 },
+                { en: "lake", ru: "озеро", category: "Природа", level: 2 },
+                { en: "sea", ru: "море", category: "Природа", level: 2 },
+                { en: "ocean", ru: "океан", category: "Природа", level: 2 },
+                { en: "beach", ru: "пляж", category: "Природа", level: 2 },
+                { en: "island", ru: "остров", category: "Природа", level: 2 },
+                { en: "desert", ru: "пустыня", category: "Природа", level: 2 },
+                { en: "field", ru: "поле", category: "Природа", level: 2 },
+                { en: "garden", ru: "сад", category: "Природа", level: 2 },
+                { en: "park", ru: "парк", category: "Природа", level: 2 },
+                { en: "flower", ru: "цветок", category: "Природа", level: 2 },
+                { en: "tree", ru: "дерево", category: "Природа", level: 2 },
+                { en: "grass", ru: "трава", category: "Природа", level: 2 },
+                { en: "leaf", ru: "лист", category: "Природа", level: 2 },
+                { en: "branch", ru: "ветка", category: "Природа", level: 2 },
+                { en: "root", ru: "корень", category: "Природа", level: 2 },
+                { en: "stone", ru: "камень", category: "Природа", level: 2 },
+                { en: "sand", ru: "песок", category: "Природа", level: 2 },
+                { en: "soil", ru: "почва", category: "Природа", level: 2 },
+                { en: "sky", ru: "небо", category: "Природа", level: 2 },
+                { en: "sun", ru: "солнце", category: "Природа", level: 2 },
+                { en: "moon", ru: "луна", category: "Природа", level: 2 },
+                { en: "star", ru: "звезда", category: "Природа", level: 2 },
+                { en: "cloud", ru: "облако", category: "Природа", level: 2 },
+                { en: "rain", ru: "дождь", category: "Природа", level: 2 },
+                { en: "snow", ru: "снег", category: "Природа", level: 2 },
+                { en: "wind", ru: "ветер", category: "Природа", level: 2 },
+                { en: "storm", ru: "шторм", category: "Природа", level: 2 },
+                { en: "weather", ru: "погода", category: "Природа", level: 2 },
+                { en: "climate", ru: "климат", category: "Природа", level: 2 },
+                { en: "season", ru: "время года", category: "Природа", level: 2 },
+                { en: "spring", ru: "весна", category: "Природа", level: 2 },
+                { en: "summer", ru: "лето", category: "Природа", level: 2 },
+                { en: "autumn", ru: "осень", category: "Природа", level: 2 },
+                { en: "winter", ru: "зима", category: "Природа", level: 2 },
+                
+                // Прилагательные - чувства
+                { en: "excited", ru: "взволнованный", category: "Чувства", level: 2 },
+                { en: "bored", ru: "скучающий", category: "Чувства", level: 2 },
+                { en: "tired", ru: "уставший", category: "Чувства", level: 2 },
+                { en: "angry", ru: "злой", category: "Чувства", level: 2 },
+                { en: "calm", ru: "спокойный", category: "Чувства", level: 2 },
+                { en: "nervous", ru: "нервный", category: "Чувства", level: 2 },
+                { en: "confident", ru: "уверенный", category: "Чувства", level: 2 },
+                { en: "shy", ru: "застенчивый", category: "Чувства", level: 2 },
+                { en: "brave", ru: "храбрый", category: "Чувства", level: 2 },
+                { en: "afraid", ru: "испуганный", category: "Чувства", level: 2 },
+                { en: "surprised", ru: "удивленный", category: "Чувства", level: 2 },
+                { en: "interested", ru: "заинтересованный", category: "Чувства", level: 2 },
+                { en: "disappointed", ru: "разочарованный", category: "Чувства", level: 2 },
+                { en: "proud", ru: "гордый", category: "Чувства", level: 2 },
+                { en: "ashamed", ru: "пристыженный", category: "Чувства", level: 2 },
+                { en: "jealous", ru: "ревнивый", category: "Чувства", level: 2 },
+                { en: "lonely", ru: "одинокий", category: "Чувства", level: 2 },
+                { en: "guilty", ru: "виноватый", category: "Чувства", level: 2 },
+                { en: "innocent", ru: "невиновный", category: "Чувства", level: 2 },
+                { en: "satisfied", ru: "удовлетворенный", category: "Чувства", level: 2 },
+                
+                // Существительные - город
+                { en: "city", ru: "город", category: "Город", level: 2 },
+                { en: "town", ru: "городок", category: "Город", level: 2 },
+                { en: "village", ru: "деревня", category: "Город", level: 2 },
+                { en: "street", ru: "улица", category: "Город", level: 2 },
+                { en: "road", ru: "дорога", category: "Город", level: 2 },
+                { en: "square", ru: "площадь", category: "Город", level: 2 },
+                { en: "bridge", ru: "мост", category: "Город", level: 2 },
+                { en: "building", ru: "здание", category: "Город", level: 2 },
+                { en: "house", ru: "дом", category: "Город", level: 2 },
+                { en: "apartment", ru: "квартира", category: "Город", level: 2 },
+                { en: "office", ru: "офис", category: "Город", level: 2 },
+                { en: "shop", ru: "магазин", category: "Город", level: 2 },
+                { en: "market", ru: "рынок", category: "Город", level: 2 },
+                { en: "restaurant", ru: "ресторан", category: "Город", level: 2 },
+                { en: "cafe", ru: "кафе", category: "Город", level: 2 },
+                { en: "hotel", ru: "гостиница", category: "Город", level: 2 },
+                { en: "hospital", ru: "больница", category: "Город", level: 2 },
+                { en: "school", ru: "школа", category: "Город", level: 2 },
+                { en: "university", ru: "университет", category: "Город", level: 2 },
+                { en: "library", ru: "библиотека", category: "Город", level: 2 },
+                { en: "museum", ru: "музей", category: "Город", level: 2 },
+                { en: "theater", ru: "театр", category: "Город", level: 2 },
+                { en: "cinema", ru: "кинотеатр", category: "Город", level: 2 },
+                { en: "stadium", ru: "стадион", category: "Город", level: 2 },
+                { en: "park", ru: "парк", category: "Город", level: 2 },
+                { en: "zoo", ru: "зоопарк", category: "Город", level: 2 },
+                { en: "station", ru: "станция", category: "Город", level: 2 },
+                { en: "airport", ru: "аэропорт", category: "Город", level: 2 },
+                { en: "port", ru: "порт", category: "Город", level: 2 },
+                { en: "bank", ru: "банк", category: "Город", level: 2 },
+                { en: "post office", ru: "почта", category: "Город", level: 2 },
+                { en: "police station", ru: "полицейский участок", category: "Город", level: 2 },
+                { en: "fire station", ru: "пожарная станция", category: "Город", level: 2 }
+            ],
+
+            // Уровень 3 (B1-B2 - Продвинутый)
+            advanced: [
+                // Академические слова
+                { en: "analysis", ru: "анализ", category: "Академические", level: 3 },
+                { en: "approach", ru: "подход", category: "Академические", level: 3 },
+                { en: "assessment", ru: "оценка", category: "Академические", level: 3 },
+                { en: "assumption", ru: "предположение", category: "Академические", level: 3 },
+                { en: "authority", ru: "власть", category: "Академические", level: 3 },
+                { en: "available", ru: "доступный", category: "Академические", level: 3 },
+                { en: "benefit", ru: "выгода", category: "Академические", level: 3 },
+                { en: "concept", ru: "концепция", category: "Академические", level: 3 },
+                { en: "consistent", ru: "последовательный", category: "Академические", level: 3 },
+                { en: "constitutional", ru: "конституционный", category: "Академические", level: 3 },
+                { en: "context", ru: "контекст", category: "Академические", level: 3 },
+                { en: "contract", ru: "контракт", category: "Академические", level: 3 },
+                { en: "create", ru: "создавать", category: "Академические", level: 3 },
+                { en: "data", ru: "данные", category: "Академические", level: 3 },
+                { en: "definition", ru: "определение", category: "Академические", level: 3 },
+                { en: "derived", ru: "производный", category: "Академические", level: 3 },
+                { en: "distribution", ru: "распределение", category: "Академические", level: 3 },
+                { en: "economic", ru: "экономический", category: "Академические", level: 3 },
+                { en: "environment", ru: "окружающая среда", category: "Академические", level: 3 },
+                { en: "established", ru: "установленный", category: "Академические", level: 3 },
+                { en: "estimate", ru: "оценка", category: "Академические", level: 3 },
+                { en: "evidence", ru: "доказательство", category: "Академические", level: 3 },
+                { en: "export", ru: "экспорт", category: "Академические", level: 3 },
+                { en: "factors", ru: "факторы", category: "Академические", level: 3 },
+                { en: "financial", ru: "финансовый", category: "Академические", level: 3 },
+                { en: "formula", ru: "формула", category: "Академические", level: 3 },
+                { en: "function", ru: "функция", category: "Академические", level: 3 },
+                { en: "identified", ru: "идентифицированный", category: "Академические", level: 3 },
+                { en: "income", ru: "доход", category: "Академические", level: 3 },
+                { en: "indicate", ru: "указывать", category: "Академические", level: 3 },
+                { en: "individual", ru: "индивидуальный", category: "Академические", level: 3 },
+                { en: "interpretation", ru: "интерпретация", category: "Академические", level: 3 },
+                { en: "involved", ru: "вовлеченный", category: "Академические", level: 3 },
+                { en: "issues", ru: "вопросы", category: "Академические", level: 3 },
+                { en: "labour", ru: "труд", category: "Академические", level: 3 },
+                { en: "legal", ru: "юридический", category: "Академические", level: 3 },
+                { en: "legislation", ru: "законодательство", category: "Академические", level: 3 },
+                { en: "major", ru: "основной", category: "Академические", level: 3 },
+                { en: "method", ru: "метод", category: "Академические", level: 3 },
+                { en: "occur", ru: "происходить", category: "Академические", level: 3 },
+                { en: "percent", ru: "процент", category: "Академические", level: 3 },
+                { en: "period", ru: "период", category: "Академические", level: 3 },
+                { en: "policy", ru: "политика", category: "Академические", level: 3 },
+                { en: "principle", ru: "принцип", category: "Академические", level: 3 },
+                { en: "procedure", ru: "процедура", category: "Академические", level: 3 },
+                { en: "process", ru: "процесс", category: "Академические", level: 3 },
+                { en: "required", ru: "требуемый", category: "Академические", level: 3 },
+                { en: "research", ru: "исследование", category: "Академические", level: 3 },
+                { en: "response", ru: "ответ", category: "Академические", level: 3 },
+                { en: "role", ru: "роль", category: "Академические", level: 3 },
+                { en: "section", ru: "раздел", category: "Академические", level: 3 },
+                { en: "sector", ru: "сектор", category: "Академические", level: 3 },
+                { en: "significant", ru: "значительный", category: "Академические", level: 3 },
+                { en: "similar", ru: "похожий", category: "Академические", level: 3 },
+                { en: "source", ru: "источник", category: "Академические", level: 3 },
+                { en: "specific", ru: "конкретный", category: "Академические", level: 3 },
+                { en: "structure", ru: "структура", category: "Академические", level: 3 },
+                { en: "theory", ru: "теория", category: "Академические", level: 3 },
+                { en: "variable", ru: "переменная", category: "Академические", level: 3 },
+                
+                // Деловая лексика
+                { en: "acquisition", ru: "приобретение", category: "Бизнес", level: 3 },
+                { en: "administration", ru: "администрация", category: "Бизнес", level: 3 },
+                { en: "advertising", ru: "реклама", category: "Бизнес", level: 3 },
+                { en: "assets", ru: "активы", category: "Бизнес", level: 3 },
+                { en: "audit", ru: "аудит", category: "Бизнес", level: 3 },
+                { en: "bankruptcy", ru: "банкротство", category: "Бизнес", level: 3 },
+                { en: "budget", ru: "бюджет", category: "Бизнес", level: 3 },
+                { en: "capital", ru: "капитал", category: "Бизнес", level: 3 },
+                { en: "cash flow", ru: "денежный поток", category: "Бизнес", level: 3 },
+                { en: "collaboration", ru: "сотрудничество", category: "Бизнес", level: 3 },
+                { en: "commodity", ru: "товар", category: "Бизнес", level: 3 },
+                { en: "competition", ru: "конкуренция", category: "Бизнес", level: 3 },
+                { en: "consumer", ru: "потребитель", category: "Бизнес", level: 3 },
+                { en: "corporation", ru: "корпорация", category: "Бизнес", level: 3 },
+                { en: "cost", ru: "стоимость", category: "Бизнес", level: 3 },
+                { en: "credit", ru: "кредит", category: "Бизнес", level: 3 },
+                { en: "currency", ru: "валюта", category: "Бизнес", level: 3 },
+                { en: "customer", ru: "клиент", category: "Бизнес", level: 3 },
+                { en: "debt", ru: "долг", category: "Бизнес", level: 3 },
+                { en: "demand", ru: "спрос", category: "Бизнес", level: 3 },
+                { en: "depreciation", ru: "амортизация", category: "Бизнес", level: 3 },
+                { en: "distribution", ru: "распределение", category: "Бизнес", level: 3 },
+                { en: "dividend", ru: "дивиденд", category: "Бизнес", level: 3 },
+                { en: "e-commerce", ru: "электронная коммерция", category: "Бизнес", level: 3 },
+                { en: "economy", ru: "экономика", category: "Бизнес", level: 3 },
+                { en: "enterprise", ru: "предприятие", category: "Бизнес", level: 3 },
+                { en: "entrepreneur", ru: "предприниматель", category: "Бизнес", level: 3 },
+                { en: "equity", ru: "акционерный капитал", category: "Бизнес", level: 3 },
+                { en: "export", ru: "экспорт", category: "Бизнес", level: 3 },
+                { en: "finance", ru: "финансы", category: "Бизнес", level: 3 },
+                { en: "franchise", ru: "франшиза", category: "Бизнес", level: 3 },
+                { en: "globalization", ru: "глобализация", category: "Бизнес", level: 3 },
+                { en: "gross", ru: "валовой", category: "Бизнес", level: 3 },
+                { en: "import", ru: "импорт", category: "Бизнес", level: 3 },
+                { en: "industry", ru: "индустрия", category: "Бизнес", level: 3 },
+                { en: "inflation", ru: "инфляция", category: "Бизнес", level: 3 },
+                { en: "innovation", ru: "инновация", category: "Бизнес", level: 3 },
+                { en: "insurance", ru: "страхование", category: "Бизнес", level: 3 },
+                { en: "intellectual property", ru: "интеллектуальная собственность", category: "Бизнес", level: 3 },
+                { en: "interest", ru: "процент", category: "Бизнес", level: 3 },
+                { en: "investment", ru: "инвестиция", category: "Бизнес", level: 3 },
+                { en: "invoice", ru: "счет", category: "Бизнес", level: 3 },
+                { en: "liability", ru: "обязательство", category: "Бизнес", level: 3 },
+                { en: "loan", ru: "заем", category: "Бизнес", level: 3 },
+                { en: "management", ru: "управление", category: "Бизнес", level: 3 },
+                { en: "manufacturing", ru: "производство", category: "Бизнес", level: 3 },
+                { en: "market", ru: "рынок", category: "Бизнес", level: 3 },
+                { en: "marketing", ru: "маркетинг", category: "Бизнес", level: 3 },
+                { en: "merger", ru: "слияние", category: "Бизнес", level: 3 },
+                { en: "mortgage", ru: "ипотека", category: "Бизнес", level: 3 },
+                { en: "negotiation", ru: "переговоры", category: "Бизнес", level: 3 },
+                { en: "net", ru: "чистый", category: "Бизнес", level: 3 },
+                { en: "outsourcing", ru: "аутсорсинг", category: "Бизнес", level: 3 },
+                { en: "partnership", ru: "партнерство", category: "Бизнес", level: 3 },
+                { en: "pension", ru: "пенсия", category: "Бизнес", level: 3 },
+                { en: "portfolio", ru: "портфолио", category: "Бизнес", level: 3 },
+                { en: "productivity", ru: "продуктивность", category: "Бизнес", level: 3 },
+                { en: "profit", ru: "прибыль", category: "Бизнес", level: 3 },
+                { en: "property", ru: "собственность", category: "Бизнес", level: 3 },
+                { en: "purchase", ru: "покупка", category: "Бизнес", level: 3 },
+                { en: "quality", ru: "качество", category: "Бизнес", level: 3 },
+                { en: "receipt", ru: "чек", category: "Бизнес", level: 3 },
+                { en: "recession", ru: "рецессия", category: "Бизнес", level: 3 },
+                { en: "recruitment", ru: "набор персонала", category: "Бизнес", level: 3 },
+                { en: "revenue", ru: "доход", category: "Бизнес", level: 3 },
+                { en: "salary", ru: "зарплата", category: "Бизнес", level: 3 },
+                { en: "savings", ru: "сбережения", category: "Бизнес", level: 3 },
+                { en: "share", ru: "акция", category: "Бизнес", level: 3 },
+                { en: "shareholder", ru: "акционер", category: "Бизнес", level: 3 },
+                { en: "software", ru: "программное обеспечение", category: "Бизнес", level: 3 },
+                { en: "stock", ru: "акции", category: "Бизнес", level: 3 },
+                { en: "strategy", ru: "стратегия", category: "Бизнес", level: 3 },
+                { en: "supply", ru: "предложение", category: "Бизнес", level: 3 },
+                { en: "tax", ru: "налог", category: "Бизнес", level: 3 },
+                { en: "trade", ru: "торговля", category: "Бизнес", level: 3 },
+                { en: "transaction", ru: "транзакция", category: "Бизнес", level: 3 },
+                { en: "turnover", ru: "оборот", category: "Бизнес", level: 3 },
+                { en: "valuation", ru: "оценка", category: "Бизнес", level: 3 },
+                { en: "venture", ru: "предприятие", category: "Бизнес", level: 3 },
+                { en: "warehouse", ru: "склад", category: "Бизнес", level: 3 },
+                { en: "wealth", ru: "богатство", category: "Бизнес", level: 3 },
+                { en: "welfare", ru: "благосостояние", category: "Бизнес", level: 3 },
+                { en: "wholesale", ru: "оптовая торговля", category: "Бизнес", level: 3 },
+                
+                // Технические термины
+                { en: "algorithm", ru: "алгоритм", category: "Технологии", level: 3 },
+                { en: "application", ru: "приложение", category: "Технологии", level: 3 },
+                { en: "bandwidth", ru: "пропускная способность", category: "Технологии", level: 3 },
+                { en: "binary", ru: "двоичный", category: "Технологии", level: 3 },
+                { en: "browser", ru: "браузер", category: "Технологии", level: 3 },
+                { en: "cache", ru: "кэш", category: "Технологии", level: 3 },
+                { en: "cloud", ru: "облако", category: "Технологии", level: 3 },
+                { en: "code", ru: "код", category: "Технологии", level: 3 },
+                { en: "compiler", ru: "компилятор", category: "Технологии", level: 3 },
+                { en: "compression", ru: "сжатие", category: "Технологии", level: 3 },
+                { en: "computing", ru: "вычисления", category: "Технологии", level: 3 },
+                { en: "cybersecurity", ru: "кибербезопасность", category: "Технологии", level: 3 },
+                { en: "data mining", ru: "анализ данных", category: "Технологии", level: 3 },
+                { en: "database", ru: "база данных", category: "Технологии", level: 3 },
+                { en: "debugging", ru: "отладка", category: "Технологии", level: 3 },
+                { en: "deployment", ru: "развертывание", category: "Технологии", level: 3 },
+                { en: "development", ru: "разработка", category: "Технологии", level: 3 },
+                { en: "digital", ru: "цифровой", category: "Технологии", level: 3 },
+                { en: "domain", ru: "домен", category: "Технологии", level: 3 },
+                { en: "encryption", ru: "шифрование", category: "Технологии", level: 3 },
+                { en: "firewall", ru: "брандмауэр", category: "Технологии", level: 3 },
+                { en: "framework", ru: "фреймворк", category: "Технологии", level: 3 },
+                { en: "function", ru: "функция", category: "Технологии", level: 3 },
+                { en: "hardware", ru: "аппаратное обеспечение", category: "Технологии", level: 3 },
+                { en: "hosting", ru: "хостинг", category: "Технологии", level: 3 },
+                { en: "interface", ru: "интерфейс", category: "Технологии", level: 3 },
+                { en: "internet", ru: "интернет", category: "Технологии", level: 3 },
+                { en: "kernel", ru: "ядро", category: "Технологии", level: 3 },
+                { en: "latency", ru: "задержка", category: "Технологии", level: 3 },
+                { en: "library", ru: "библиотека", category: "Технологии", level: 3 },
+                { en: "malware", ru: "вредоносное ПО", category: "Технологии", level: 3 },
+                { en: "network", ru: "сеть", category: "Технологии", level: 3 },
+                { en: "operating system", ru: "операционная система", category: "Технологии", level: 3 },
+                { en: "optimization", ru: "оптимизация", category: "Технологии", level: 3 },
+                { en: "protocol", ru: "протокол", category: "Технологии", level: 3 },
+                { en: "query", ru: "запрос", category: "Технологии", level: 3 },
+                { en: "render", ru: "рендеринг", category: "Технологии", level: 3 },
+                { en: "responsive", ru: "адаптивный", category: "Технологии", level: 3 },
+                { en: "scalability", ru: "масштабируемость", category: "Технологии", level: 3 },
+                { en: "server", ru: "сервер", category: "Технологии", level: 3 },
+                { en: "software", ru: "программное обеспечение", category: "Технологии", level: 3 },
+                { en: "source code", ru: "исходный код", category: "Технологии", level: 3 },
+                { en: "spam", ru: "спам", category: "Технологии", level: 3 },
+                { en: "syntax", ru: "синтаксис", category: "Технологии", level: 3 },
+                { en: "template", ru: "шаблон", category: "Технологии", level: 3 },
+                { en: "virtual", ru: "виртуальный", category: "Технологии", level: 3 },
+                { en: "virus", ru: "вирус", category: "Технологии", level: 3 },
+                { en: "web", ru: "веб", category: "Технологии", level: 3 }
+            ]
+        };
+
+        // ==================== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ====================
+        let currentUserData = {
+            words: {},
+            stats: {
+                learned: 0,
+                review: 0,
+                today: 0,
+                streak: 0,
+                totalWords: 0,
+                testsCompleted: 0,
+                gamesWon: 0,
+                accuracy: 0,
+                xp: 0,
+                level: 1,
+                lastStudyDate: ''
+            },
+            settings: {
+                theme: 'light',
+                themeColor: '#667eea',
+                difficulty: 'beginner',
+                sound: true,
+                notifications: true
+            },
+            achievements: []
+        };
+
+        let currentWord = null;
+        let currentWordList = [];
+        let currentWordIndex = 0;
+        let filteredWords = [];
+        let currentMode = 'learn';
+        let hangmanGame = null;
+        let testQuestions = [];
+        let currentTestIndex = 0;
 
         // ==================== ИНИЦИАЛИЗАЦИЯ ====================
         document.addEventListener('DOMContentLoaded', function() {
-            loadUserData();
-            showRandomWord();
-            updateStats();
-            updateWordList();
-            updateLevelInfo();
-            initAlphabetButtons();
-            
-            // Инициализация Telegram
-            const tg = window.Telegram?.WebApp;
-            if (tg) {
-                tg.expand();
-                tg.ready();
-                // Устанавливаем цвет фона Telegram
-                tg.setBackgroundColor('#667eea');
-                tg.setHeaderColor('#667eea');
-            }
+            initApp();
         });
 
-        // ==================== ОСНОВНЫЕ ФУНКЦИИ ====================
-        
-        // Показать случайное слово
-        function showRandomWord() {
-            // Если слова закончились - начинаем сначала
-            if (currentWordIndex >= vocabulary.length) {
-                currentWordIndex = 0;
-            }
+        function initApp() {
+            loadUserData();
+            setupEventListeners();
+            updateUI();
+            showNextWord();
+            updateWordList();
+            updateProfile();
+            populateCategories();
+            initAlphabet();
             
-            const word = vocabulary[currentWordIndex];
-            
-            // Обновляем отображение
-            document.getElementById('english-word').textContent = word.en;
-            document.getElementById('russian-translation').textContent = word.ru;
-            document.getElementById('russian-translation').classList.add('hidden');
-            document.getElementById('next-btn').classList.add('hidden');
-            document.getElementById('show-btn').classList.remove('hidden');
-            
-            // Обновляем прогресс
-            updateProgress();
+            // Установка имени пользователя
+            document.getElementById('profile-username').textContent = username;
         }
-        
-        // Показать перевод
-        function showTranslation() {
-            document.getElementById('russian-translation').classList.remove('hidden');
-            document.getElementById('next-btn').classList.remove('hidden');
-            document.getElementById('show-btn').classList.add('hidden');
-        }
-        
-        // Следующее слово
-        function nextWord() {
-            currentWordIndex = (currentWordIndex + 1) % vocabulary.length;
-            showRandomWord();
-        }
-        
-        // Отметить как выученное
-        function markAsKnown() {
-            const word = vocabulary[currentWordIndex];
-            const wordId = word.en + '|' + word.ru;
-            
-            if (!learnedWords.includes(wordId)) {
-                learnedWords.push(wordId);
-                todayWords.push(wordId);
-                
-                // Начисляем опыт
-                addXP(5 + word.level); // Чем выше уровень слова, тем больше XP
-                
+
+        function setupEventListeners() {
+            // Переключение вкладок
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    switchTab(tabName);
+                });
+            });
+
+            // Тема
+            document.getElementById('theme-toggle').addEventListener('change', function() {
+                toggleTheme(this.checked);
+            });
+
+            // Звук
+            document.getElementById('sound-toggle').addEventListener('change', function() {
+                currentUserData.settings.sound = this.checked;
                 saveUserData();
-                updateStats();
-                updateWordList();
-                updateLevelInfo();
-                checkAchievements();
-                
-                // Показываем уведомление
-                showNotification('✅ +' + (5 + word.level) + ' XP! Слово "' + word.en + '" выучено!');
-                
-                // Следующее слово
-                setTimeout(nextWord, 500);
-            }
-        }
-        
-        // Отметить для повторения
-        function markAsReview() {
-            showNotification('🔁 Слово добавлено в список для повторения');
-            nextWord();
-        }
-        
-        // Добавить опыт
-        function addXP(amount) {
-            userXP += amount;
-            
-            // Проверка повышения уровня (каждые 100 XP)
-            const newLevel = Math.floor(userXP / 100) + 1;
-            if (newLevel > userLevel) {
-                userLevel = newLevel;
-                showNotification('🎉 УРОВЕНЬ ПОВЫШЕН! Теперь ты уровень ' + userLevel + '!');
-            }
-        }
-        
-        // Обновить информацию об уровне
-        function updateLevelInfo() {
-            document.getElementById('user-xp').textContent = userXP;
-            document.getElementById('level-number').textContent = userLevel;
-            
-            // Определяем название уровня
-            let levelName = "Новичок";
-            if (userLevel >= 5) levelName = "Ученик";
-            if (userLevel >= 10) levelName = "Знаток";
-            if (userLevel >= 20) levelName = "Эксперт";
-            if (userLevel >= 30) levelName = "Мастер";
-            
-            document.getElementById('user-level').textContent = levelName;
-        }
-        
-        // Обновить прогресс
-        function updateProgress() {
-            const progress = ((currentWordIndex + 1) / vocabulary.length) * 100;
-            document.getElementById('progress-bar').style.width = progress + '%';
-            document.getElementById('progress-text').textContent = 
-                (currentWordIndex + 1) + '/' + vocabulary.length;
-        }
-        
-        // Обновить статистику
-        function updateStats() {
-            document.getElementById('learned-words').textContent = learnedWords.length;
-            document.getElementById('today-words').textContent = todayWords.length;
-            document.getElementById('streak-days').textContent = streak;
-        }
-        
-        // Обновить список слов
-        function updateWordList() {
-            const container = document.getElementById('word-list');
-            container.innerHTML = '';
-            
-            // Показываем только 5 последних слов
-            const recentWords = learnedWords.slice(-5);
-            
-            recentWords.forEach(wordId => {
-                const [en, ru] = wordId.split('|');
-                const word = vocabulary.find(w => w.en === en);
-                if (word) {
-                    const div = document.createElement('div');
-                    div.style.padding = '8px';
-                    div.style.borderBottom = '1px solid #eee';
-                    div.innerHTML = `
-                        <strong>${en}</strong> - ${ru}
-                        <small style="color: #666; float: right;">Ур. ${word.level}</small>
-                    `;
-                    container.appendChild(div);
-                }
             });
-            
-            if (recentWords.length === 0) {
-                container.innerHTML = '<div style="text-align: center; color: #666; padding: 20px;">Ещё нет изученных слов</div>';
-            }
-        }
-        
-        // Показать все слова
-        function showAllWords() {
-            let message = "📖 ВАШ СЛОВАРЬ (" + learnedWords.length + " слов):\n\n";
-            learnedWords.forEach((wordId, index) => {
-                const [en, ru] = wordId.split('|');
-                const word = vocabulary.find(w => w.en === en);
-                const level = word ? word.level : '?';
-                message += `${index + 1}. ${en} - ${ru} (Ур. ${level})\n`;
+
+            // Уведомления
+            document.getElementById('notifications-toggle').addEventListener('change', function() {
+                currentUserData.settings.notifications = this.checked;
+                saveUserData();
             });
-            
-            if (learnedWords.length === 0) {
-                message = "Вы ещё не выучили ни одного слова. Начните сейчас!";
-            }
-            
-            alert(message);
-        }
-        
-        // Показать достижения
-        function showAchievements() {
-            document.getElementById('achievements-section').classList.remove('hidden');
-            document.getElementById('flashcard-section').classList.add('hidden');
-            document.getElementById('hangman-section').classList.add('hidden');
-            
-            const container = document.getElementById('achievements-list');
-            container.innerHTML = '';
-            
-            const userData = JSON.parse(localStorage.getItem('englishBotData')) || {};
-            const unlocked = userData.unlockedAchievements || [];
-            
-            achievements.forEach(achievement => {
-                const isUnlocked = unlocked.includes(achievement.id);
-                const div = document.createElement('div');
-                div.style.padding = '15px';
-                div.style.borderBottom = '1px solid #eee';
-                div.style.display = 'flex';
-                div.style.alignItems = 'center';
-                div.style.gap = '15px';
-                div.innerHTML = `
-                    <div style="font-size: 24px;">${isUnlocked ? achievement.icon : '🔒'}</div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: bold; color: ${isUnlocked ? '#333' : '#999'}">
-                            ${achievement.name}
-                        </div>
-                        <div style="font-size: 12px; color: #666;">${achievement.description}</div>
-                    </div>
-                    <div style="font-weight: bold; color: #667eea;">+${achievement.xp} XP</div>
-                `;
-                container.appendChild(div);
+
+            // Поиск
+            document.getElementById('search-word').addEventListener('input', function() {
+                searchWords(this.value);
+            });
+
+            // Фильтр категорий
+            document.getElementById('filter-category').addEventListener('change', function() {
+                filterByCategory(this.value);
+            });
+
+            // Импорт данных
+            document.getElementById('import-file').addEventListener('change', function(e) {
+                importData(e);
             });
         }
 
-        // ==================== РЕЖИМЫ ОБУЧЕНИЯ ====================
-        
-        // Установить режим
-        function setMode(mode) {
-            currentMode = mode;
+        // ==================== РАБОТА СО СЛОВАМИ ====================
+        function showNextWord() {
+            // Получаем слова для текущего уровня сложности
+            let words = getWordsForDifficulty();
             
-            // Скрыть все секции
-            document.getElementById('flashcard-section').classList.add('hidden');
-            document.getElementById('hangman-section').classList.add('hidden');
-            document.getElementById('achievements-section').classList.add('hidden');
-            
-            switch(mode) {
-                case 'cards':
-                    document.getElementById('flashcard-section').classList.remove('hidden');
-                    showRandomWord();
-                    break;
-                    
-                case 'test':
-                    startTestMode();
-                    break;
-                    
-                case 'typing':
-                    startTypingMode();
-                    break;
-                    
-                case 'hangman':
-                    document.getElementById('hangman-section').classList.remove('hidden');
-                    startNewHangmanGame();
-                    break;
-            }
-        }
-        
-        // Начать тестовый режим
-        function startTestMode() {
-            const word = vocabulary[currentWordIndex];
-            
-            // Создаем варианты ответов
-            let answers = [word.ru];
-            while (answers.length < 4) {
-                const randomWord = vocabulary[Math.floor(Math.random() * vocabulary.length)];
-                if (!answers.includes(randomWord.ru)) {
-                    answers.push(randomWord.ru);
+            // Фильтруем слова, которые ещё не изучены или нуждаются в повторении
+            filteredWords = words.filter(word => {
+                const wordData = currentUserData.words[word.en];
+                return !wordData || wordData.status === 'new' || wordData.status === 'review';
+            });
+
+            // Если все слова изучены, показываем случайные слова для повторения
+            if (filteredWords.length === 0) {
+                filteredWords = words.filter(word => {
+                    const wordData = currentUserData.words[word.en];
+                    return wordData && wordData.status === 'known';
+                });
+                
+                // Если и повторяемых нет, берем все слова
+                if (filteredWords.length === 0) {
+                    filteredWords = words;
                 }
             }
-            
-            // Перемешиваем ответы
-            answers = shuffleArray(answers);
-            
-            // Показываем тест
-            const answerHTML = answers.map((answer, index) => `
-                <button class="btn" onclick="checkAnswer('${answer}', '${word.ru}')" 
-                        style="margin: 5px 0; text-align: left; background: white; color: #333; border: 2px solid #667eea;">
-                    ${String.fromCharCode(65 + index)}. ${answer}
-                </button>
-            `).join('');
-            
-            document.getElementById('english-word').innerHTML = `
-                <div style="font-size: 24px; margin-bottom: 20px;">Выберите перевод:</div>
-                <div style="font-size: 36px; color: #667eea;">"${word.en}"</div>
-            `;
-            
-            document.getElementById('russian-translation').innerHTML = answerHTML;
-            document.getElementById('russian-translation').classList.remove('hidden');
-            document.getElementById('show-btn').classList.add('hidden');
-            document.getElementById('next-btn').classList.add('hidden');
+
+            // Выбираем случайное слово из отфильтрованных
+            if (filteredWords.length > 0) {
+                currentWordIndex = Math.floor(Math.random() * filteredWords.length);
+                currentWord = filteredWords[currentWordIndex];
+                
+                // Обновляем UI
+                document.getElementById('english-word').textContent = currentWord.en;
+                document.getElementById('russian-translation').textContent = '';
+                document.getElementById('russian-translation').classList.add('hidden');
+                document.getElementById('next-btn').classList.add('hidden');
+                document.getElementById('show-btn').classList.remove('hidden');
+                
+                // Обновляем прогресс
+                updateProgress();
+                updateWordDifficulty();
+            }
         }
-        
-        // Проверить ответ в тесте
-        function checkAnswer(selected, correct) {
-            if (selected === correct) {
-                showNotification('✅ Правильно! +10 XP');
+
+        function getWordsForDifficulty() {
+            switch(currentUserData.settings.difficulty) {
+                case 'beginner':
+                    return vocabulary.beginner;
+                case 'intermediate':
+                    return [...vocabulary.beginner, ...vocabulary.intermediate];
+                case 'advanced':
+                    return [...vocabulary.beginner, ...vocabulary.intermediate, ...vocabulary.advanced];
+                default:
+                    return vocabulary.beginner;
+            }
+        }
+
+        function showTranslation() {
+            if (currentWord) {
+                document.getElementById('russian-translation').textContent = currentWord.ru;
+                document.getElementById('russian-translation').classList.remove('hidden');
+                document.getElementById('next-btn').classList.remove('hidden');
+                document.getElementById('show-btn').classList.add('hidden');
+            }
+        }
+
+        function nextWord() {
+            showNextWord();
+        }
+
+        function markWord(status) {
+            if (!currentWord) return;
+
+            // Обновляем статус слова
+            if (!currentUserData.words[currentWord.en]) {
+                currentUserData.words[currentWord.en] = {
+                    status: 'new',
+                    firstSeen: new Date().toISOString(),
+                    lastSeen: new Date().toISOString(),
+                    timesSeen: 0,
+                    timesCorrect: 0
+                };
+            }
+
+            const wordData = currentUserData.words[currentWord.en];
+            wordData.status = status;
+            wordData.lastSeen = new Date().toISOString();
+            wordData.timesSeen++;
+
+            // Обновляем статистику
+            if (status === 'known') {
+                currentUserData.stats.learned++;
+                currentUserData.stats.today++;
                 addXP(10);
-                markAsKnown();
-            } else {
-                showNotification('❌ Неправильно. Правильный ответ: ' + correct);
-                nextWord();
+                showNotification('✅ +10 XP! Слово изучено!');
+            } else if (status === 'review') {
+                currentUserData.stats.review++;
+                showNotification('🔄 Слово добавлено в повторение');
             }
+
+            // Обновляем дату последнего изучения
+            const today = new Date().toDateString();
+            if (currentUserData.stats.lastStudyDate !== today) {
+                if (currentUserData.stats.lastStudyDate === getYesterdayDate()) {
+                    currentUserData.stats.streak++;
+                } else {
+                    currentUserData.stats.streak = 1;
+                }
+                currentUserData.stats.lastStudyDate = today;
+            }
+
+            // Сохраняем и показываем следующее слово
+            saveUserData();
+            updateStats();
+            updateWordList();
+            setTimeout(nextWord, 500);
         }
-        
-        // Начать режим правописания
-        function startTypingMode() {
-            const word = vocabulary[currentWordIndex];
+
+        // ==================== РЕЖИМ ПРАКТИКИ ====================
+        function startTestMode() {
+            switchTab('practice');
             
-            document.getElementById('english-word').innerHTML = `
-                <div style="font-size: 24px; margin-bottom: 20px;">Напишите по-английски:</div>
-                <div style="font-size: 32px; color: #667eea;">"${word.ru}"</div>
-            `;
-            
-            document.getElementById('russian-translation').innerHTML = `
-                <input type="text" id="user-answer" 
-                       placeholder="Введите английское слово..." 
-                       style="width: 100%; padding: 15px; font-size: 18px; border: 3px solid #667eea; border-radius: 10px; margin: 20px 0;">
-                <button class="btn" onclick="checkTypingAnswer('${word.en}')">
-                    Проверить
-                </button>
-            `;
-            document.getElementById('russian-translation').classList.remove('hidden');
-            document.getElementById('show-btn').classList.add('hidden');
-            document.getElementById('next-btn').classList.add('hidden');
+            // Скрываем другие секции
+            document.getElementById('typing-section').classList.add('hidden');
+            document.getElementById('hangman-section').classList.add('hidden');
+            document.getElementById('test-section').classList.remove('hidden');
+
+            // Генерируем тестовые вопросы
+            generateTestQuestions();
+            showTestQuestion();
         }
-        
-        // Проверить ответ в режиме правописания
-        function checkTypingAnswer(correct) {
-            const userAnswer = document.getElementById('user-answer').value.trim().toLowerCase();
+
+        function generateTestQuestions() {
+            testQuestions = [];
+            const words = getWordsForDifficulty();
             
-            if (userAnswer === correct.toLowerCase()) {
-                showNotification('✅ Идеально! +15 XP');
-                addXP(15);
-                markAsKnown();
+            // Берем 10 случайных слов
+            for (let i = 0; i < Math.min(10, words.length); i++) {
+                const word = words[Math.floor(Math.random() * words.length)];
+                const options = [word.ru];
+                
+                // Добавляем 3 неправильных варианта
+                while (options.length < 4) {
+                    const randomWord = words[Math.floor(Math.random() * words.length)];
+                    if (!options.includes(randomWord.ru)) {
+                        options.push(randomWord.ru);
+                    }
+                }
+                
+                // Перемешиваем варианты
+                options.sort(() => Math.random() - 0.5);
+                
+                testQuestions.push({
+                    word: word.en,
+                    correct: word.ru,
+                    options: options
+                });
+            }
+            
+            currentTestIndex = 0;
+        }
+
+        function showTestQuestion() {
+            if (currentTestIndex >= testQuestions.length) {
+                finishTest();
+                return;
+            }
+
+            const question = testQuestions[currentTestIndex];
+            document.getElementById('test-question').textContent = `Выберите перевод слова: "${question.word}"`;
+            
+            const optionsContainer = document.getElementById('test-options');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'test-option';
+                button.textContent = `${String.fromCharCode(65 + index)}. ${option}`;
+                button.onclick = () => checkTestAnswer(option, question.correct);
+                optionsContainer.appendChild(button);
+            });
+            
+            document.getElementById('next-test-btn').style.display = 'none';
+        }
+
+        function checkTestAnswer(selected, correct) {
+            const options = document.querySelectorAll('.test-option');
+            
+            options.forEach(option => {
+                option.disabled = true;
+                if (option.textContent.includes(correct)) {
+                    option.style.background = '#4CAF50';
+                    option.style.color = 'white';
+                }
+                if (option.textContent.includes(selected) && selected !== correct) {
+                    option.style.background = '#f44336';
+                    option.style.color = 'white';
+                }
+            });
+            
+            if (selected === correct) {
+                addXP(5);
+                showNotification('✅ Правильно! +5 XP');
             } else {
-                showNotification(`❌ Почти! Правильно: ${correct}`);
-                nextWord();
+                showNotification(`❌ Неправильно. Правильный ответ: ${correct}`);
+            }
+            
+            document.getElementById('next-test-btn').style.display = 'block';
+        }
+
+        function nextTestQuestion() {
+            currentTestIndex++;
+            showTestQuestion();
+        }
+
+        function finishTest() {
+            currentUserData.stats.testsCompleted++;
+            addXP(25);
+            showNotification('🎉 Тест завершен! +25 XP');
+            saveUserData();
+            startTestMode(); // Начинаем новый тест
+        }
+
+        function startTypingMode() {
+            switchTab('practice');
+            
+            document.getElementById('test-section').classList.add('hidden');
+            document.getElementById('hangman-section').classList.add('hidden');
+            document.getElementById('typing-section').classList.remove('hidden');
+
+            // Выбираем случайное слово
+            const words = getWordsForDifficulty();
+            currentWord = words[Math.floor(Math.random() * words.length)];
+            
+            document.getElementById('typing-question').textContent = `Напишите по-английски: "${currentWord.ru}"`;
+            document.getElementById('typing-answer').value = '';
+            document.getElementById('typing-answer').focus();
+        }
+
+        function checkTypingAnswer() {
+            const answer = document.getElementById('typing-answer').value.trim().toLowerCase();
+            const correct = currentWord.en.toLowerCase();
+            
+            if (answer === correct) {
+                addXP(10);
+                showNotification('✅ Отлично! +10 XP');
+                startTypingMode(); // Новое слово
+            } else {
+                showNotification(`❌ Неправильно. Правильно: ${currentWord.en}`);
+                document.getElementById('typing-answer').value = '';
+                document.getElementById('typing-answer').focus();
             }
         }
 
-        // ==================== ИГРА ВИСЕЛИЦА ====================
-        
-        // Инициализировать кнопки алфавита
-        function initAlphabetButtons() {
-            const container = document.getElementById('alphabet-buttons');
-            container.innerHTML = '';
+        function skipTypingWord() {
+            showNotification(`Слово пропущено. Правильно: ${currentWord.en}`);
+            startTypingMode();
+        }
+
+        function startHangmanMode() {
+            switchTab('practice');
+            
+            document.getElementById('test-section').classList.add('hidden');
+            document.getElementById('typing-section').classList.add('hidden');
+            document.getElementById('hangman-section').classList.remove('hidden');
+
+            startHangmanGame();
+        }
+
+        function initAlphabet() {
+            const grid = document.getElementById('alphabet-grid');
+            grid.innerHTML = '';
             
             const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
             
@@ -945,119 +1876,462 @@
                 button.className = 'letter-btn';
                 button.textContent = letter;
                 button.onclick = () => guessLetter(letter);
-                container.appendChild(button);
+                grid.appendChild(button);
             });
         }
-        
-        // Начать новую игру Виселица
-        function startNewHangmanGame() {
-            // Выбираем случайное слово
-            hangmanWord = hangmanWords[Math.floor(Math.random() * hangmanWords.length)];
-            hangmanDisplay = [];
-            hangmanRemaining = 6;
-            usedLetters = [];
+
+        function startHangmanGame() {
+            const words = getWordsForDifficulty().filter(w => w.en.length >= 4 && w.en.length <= 8);
+            const word = words[Math.floor(Math.random() * words.length)];
             
-            // Создаем отображение с подчеркиваниями
-            for (let i = 0; i < hangmanWord.length; i++) {
-                hangmanDisplay.push('_');
-            }
+            hangmanGame = {
+                word: word.en.toUpperCase(),
+                category: word.category,
+                display: Array(word.en.length).fill('_'),
+                guessed: [],
+                errors: 0,
+                maxErrors: 6
+            };
             
             updateHangmanDisplay();
+            document.getElementById('hangman-category').textContent = hangmanGame.category;
             
             // Сбрасываем кнопки букв
             document.querySelectorAll('.letter-btn').forEach(btn => {
                 btn.disabled = false;
-                btn.style.background = 'white';
-                btn.style.color = '#667eea';
+                btn.classList.remove('correct', 'wrong');
+                btn.style.background = '';
+                btn.style.color = '';
             });
-            
-            document.getElementById('hangman-status').innerHTML = 
-                `Угадай слово! Осталось ошибок: <span id="remaining-attempts">6</span>`;
         }
-        
-        // Обновить отображение игры
+
         function updateHangmanDisplay() {
-            document.getElementById('hangman-word').textContent = hangmanDisplay.join(' ');
-            document.getElementById('remaining-attempts').textContent = hangmanRemaining;
+            document.getElementById('hangman-display').textContent = hangmanGame.display.join(' ');
+            document.getElementById('hangman-errors').textContent = `${hangmanGame.errors}/${hangmanGame.maxErrors}`;
         }
-        
-        // Угадать букву
+
         function guessLetter(letter) {
-            if (usedLetters.includes(letter)) {
-                showNotification('❌ Вы уже пробовали эту букву!');
-                return;
-            }
+            if (!hangmanGame || hangmanGame.guessed.includes(letter)) return;
             
-            usedLetters.push(letter);
             const button = [...document.querySelectorAll('.letter-btn')]
                 .find(btn => btn.textContent === letter);
             
-            if (button) {
-                button.disabled = true;
+            if (!button) return;
+            
+            hangmanGame.guessed.push(letter);
+            button.disabled = true;
+            
+            if (hangmanGame.word.includes(letter)) {
+                // Правильная буква
+                button.classList.add('correct');
                 
-                if (hangmanWord.includes(letter)) {
-                    // Правильная буква
-                    button.style.background = '#4CAF50';
-                    button.style.color = 'white';
-                    
-                    // Открываем буквы в слове
-                    let found = false;
-                    for (let i = 0; i < hangmanWord.length; i++) {
-                        if (hangmanWord[i] === letter) {
-                            hangmanDisplay[i] = letter;
-                            found = true;
-                        }
-                    }
-                    
-                    updateHangmanDisplay();
-                    
-                    // Проверяем, выиграли ли
-                    if (!hangmanDisplay.includes('_')) {
-                        setTimeout(() => {
-                            showNotification('🎉 ПОБЕДА! Ты угадал слово: ' + hangmanWord);
-                            addXP(30);
-                            unlockAchievement('hangman_winner');
-                            startNewHangmanGame();
-                        }, 500);
-                    }
-                } else {
-                    // Неправильная буква
-                    button.style.background = '#F44336';
-                    button.style.color = 'white';
-                    hangmanRemaining--;
-                    updateHangmanDisplay();
-                    
-                    if (hangmanRemaining <= 0) {
-                        setTimeout(() => {
-                            showNotification('💀 ПРОИГРЫШ! Слово было: ' + hangmanWord);
-                            startNewHangmanGame();
-                        }, 500);
+                // Открываем буквы в слове
+                for (let i = 0; i < hangmanGame.word.length; i++) {
+                    if (hangmanGame.word[i] === letter) {
+                        hangmanGame.display[i] = letter;
                     }
                 }
-            }
-        }
-        
-        // Показать подсказку
-        function showHint() {
-            if (hangmanRemaining > 0) {
-                // Находим первую скрытую букву
-                const hiddenIndex = hangmanDisplay.findIndex(letter => letter === '_');
-                if (hiddenIndex !== -1) {
-                    const correctLetter = hangmanWord[hiddenIndex];
-                    guessLetter(correctLetter);
-                    showNotification('💡 Подсказка использована!');
+                
+                updateHangmanDisplay();
+                
+                // Проверяем победу
+                if (!hangmanGame.display.includes('_')) {
+                    setTimeout(() => {
+                        currentUserData.stats.gamesWon++;
+                        addXP(20);
+                        showNotification('🎉 Победа! +20 XP');
+                        startHangmanGame();
+                    }, 1000);
+                }
+            } else {
+                // Неправильная буква
+                button.classList.add('wrong');
+                hangmanGame.errors++;
+                updateHangmanDisplay();
+                
+                if (hangmanGame.errors >= hangmanGame.maxErrors) {
+                    setTimeout(() => {
+                        showNotification(`💀 Поражение! Слово было: ${hangmanGame.word}`);
+                        startHangmanGame();
+                    }, 1000);
                 }
             }
         }
 
-        // ==================== АУДИО ФУНКЦИИ ====================
-        
-        // Произнести слово
+        function showHangmanHint() {
+            if (!hangmanGame) return;
+            
+            // Находим первую скрытую букву
+            const hiddenIndex = hangmanGame.display.findIndex(l => l === '_');
+            if (hiddenIndex !== -1) {
+                const letter = hangmanGame.word[hiddenIndex];
+                guessLetter(letter);
+                showNotification('💡 Подсказка использована!');
+            }
+        }
+
+        // ==================== СЛОВАРЬ ====================
+        function updateWordList() {
+            const container = document.getElementById('word-list');
+            container.innerHTML = '';
+            
+            const words = getWordsForDifficulty();
+            let knownCount = 0;
+            let reviewCount = 0;
+            let newCount = 0;
+            
+            words.forEach(word => {
+                const wordData = currentUserData.words[word.en] || { status: 'new' };
+                
+                if (wordData.status === 'known') knownCount++;
+                if (wordData.status === 'review') reviewCount++;
+                if (wordData.status === 'new') newCount++;
+                
+                const div = document.createElement('div');
+                div.className = 'word-item';
+                div.innerHTML = `
+                    <div>
+                        <strong>${word.en}</strong><br>
+                        <small style="color: #666;">${word.ru}</small>
+                    </div>
+                    <div class="word-status status-${wordData.status}">
+                        ${wordData.status === 'known' ? 'Знаю' : 
+                          wordData.status === 'review' ? 'Повтор' : 'Новое'}
+                    </div>
+                `;
+                div.onclick = () => {
+                    currentWord = word;
+                    switchTab('learn');
+                    document.getElementById('english-word').textContent = word.en;
+                    document.getElementById('russian-translation').textContent = word.ru;
+                    document.getElementById('russian-translation').classList.remove('hidden');
+                };
+                container.appendChild(div);
+            });
+            
+            // Обновляем статистику
+            document.getElementById('stats-known').textContent = knownCount;
+            document.getElementById('stats-review').textContent = reviewCount;
+            document.getElementById('stats-today').textContent = currentUserData.stats.today;
+            document.getElementById('total-words-count').textContent = words.length;
+        }
+
+        function searchWords(query) {
+            const items = document.querySelectorAll('.word-item');
+            query = query.toLowerCase();
+            
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(query) ? 'flex' : 'none';
+            });
+        }
+
+        function populateCategories() {
+            const select = document.getElementById('filter-category');
+            const categories = new Set();
+            
+            // Собираем все категории
+            Object.values(vocabulary).forEach(level => {
+                level.forEach(word => {
+                    categories.add(word.category);
+                });
+            });
+            
+            // Добавляем категории в select
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                select.appendChild(option);
+            });
+        }
+
+        function filterByCategory(category) {
+            const items = document.querySelectorAll('.word-item');
+            
+            items.forEach(item => {
+                if (category === 'all') {
+                    item.style.display = 'flex';
+                } else {
+                    const text = item.textContent;
+                    item.style.display = text.includes(category) ? 'flex' : 'none';
+                }
+            });
+        }
+
+        function filterWords(status) {
+            const items = document.querySelectorAll('.word-item');
+            
+            items.forEach(item => {
+                const text = item.textContent;
+                if (status === 'known') {
+                    item.style.display = text.includes('Знаю') ? 'flex' : 'none';
+                } else if (status === 'review') {
+                    item.style.display = text.includes('Повтор') ? 'flex' : 'none';
+                } else if (status === 'new') {
+                    item.style.display = text.includes('Новое') ? 'flex' : 'none';
+                }
+            });
+        }
+
+        // ==================== ПРОФИЛЬ И СТАТИСТИКА ====================
+        function updateProfile() {
+            document.getElementById('profile-total').textContent = currentUserData.stats.totalWords;
+            document.getElementById('profile-known').textContent = currentUserData.stats.learned;
+            document.getElementById('profile-streak').textContent = currentUserData.stats.streak;
+            document.getElementById('profile-tests').textContent = currentUserData.stats.testsCompleted;
+            document.getElementById('profile-hangman').textContent = currentUserData.stats.gamesWon;
+            document.getElementById('profile-accuracy').textContent = currentUserData.stats.accuracy + '%';
+            document.getElementById('profile-level').textContent = `Уровень ${currentUserData.stats.level} • ${currentUserData.stats.xp} XP`;
+            
+            // Прогресс уровня
+            const xpForNextLevel = currentUserData.stats.level * 100;
+            const progress = Math.min(100, (currentUserData.stats.xp % 100) / 100 * 100);
+            document.getElementById('level-progress-bar').style.width = progress + '%';
+            document.getElementById('level-progress-text').textContent = 
+                `${currentUserData.stats.xp % 100}/${100} XP`;
+        }
+
+        function updateStats() {
+            document.getElementById('learned-words').textContent = currentUserData.stats.learned;
+            document.getElementById('review-words').textContent = currentUserData.stats.review;
+            document.getElementById('today-words').textContent = currentUserData.stats.today;
+            document.getElementById('user-xp').textContent = currentUserData.stats.xp;
+            
+            // Определяем уровень
+            let levelName = "Новичок";
+            if (currentUserData.stats.level >= 5) levelName = "Ученик";
+            if (currentUserData.stats.level >= 10) levelName = "Средний";
+            if (currentUserData.stats.level >= 20) levelName = "Продвинутый";
+            if (currentUserData.stats.level >= 30) levelName = "Эксперт";
+            
+            document.getElementById('user-level').textContent = levelName;
+        }
+
+        function updateProgress() {
+            if (!filteredWords.length) return;
+            
+            const progress = ((currentWordIndex + 1) / filteredWords.length) * 100;
+            document.getElementById('progress-bar').style.width = progress + '%';
+            document.getElementById('progress-text').textContent = 
+                `${currentWordIndex + 1}/${filteredWords.length}`;
+        }
+
+        function updateWordDifficulty() {
+            if (!currentWord) return;
+            
+            let difficulty = "Легкое";
+            if (currentWord.level === 2) difficulty = "Среднее";
+            if (currentWord.level === 3) difficulty = "Сложное";
+            
+            document.getElementById('word-difficulty').textContent = difficulty;
+        }
+
+        // ==================== XP И УРОВНИ ====================
+        function addXP(amount) {
+            currentUserData.stats.xp += amount;
+            
+            // Проверяем повышение уровня
+            const newLevel = Math.floor(currentUserData.stats.xp / 100) + 1;
+            if (newLevel > currentUserData.stats.level) {
+                currentUserData.stats.level = newLevel;
+                showNotification(`🎉 Уровень повышен! Теперь ты уровень ${newLevel}!`);
+            }
+            
+            saveUserData();
+            updateStats();
+            updateProfile();
+        }
+
+        // ==================== НАСТРОЙКИ ====================
+        function toggleTheme(isDark) {
+            if (isDark) {
+                document.body.classList.add('dark-theme');
+                document.body.classList.remove('light-theme');
+                currentUserData.settings.theme = 'dark';
+            } else {
+                document.body.classList.add('light-theme');
+                document.body.classList.remove('dark-theme');
+                currentUserData.settings.theme = 'light';
+            }
+            saveUserData();
+        }
+
+        function setThemeColor(color) {
+            currentUserData.settings.themeColor = color;
+            
+            // Обновляем активную кнопку
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Применяем цвет
+            document.documentElement.style.setProperty('--theme-color', color);
+            saveUserData();
+        }
+
+        function setDifficulty(level) {
+            currentUserData.settings.difficulty = level;
+            
+            // Обновляем активную кнопку
+            document.querySelectorAll('.difficulty-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Обновляем описание
+            let description = "";
+            let count = 0;
+            
+            switch(level) {
+                case 'beginner':
+                    count = vocabulary.beginner.length;
+                    description = `${count} базовых слов`;
+                    break;
+                case 'intermediate':
+                    count = vocabulary.beginner.length + vocabulary.intermediate.length;
+                    description = `${count} слов (базовые + средние)`;
+                    break;
+                case 'advanced':
+                    count = vocabulary.beginner.length + vocabulary.intermediate.length + vocabulary.advanced.length;
+                    description = `${count}+ слов (все уровни)`;
+                    break;
+            }
+            
+            document.getElementById('difficulty-description').textContent = description;
+            document.getElementById('vocab-count').textContent = count;
+            
+            saveUserData();
+            showNextWord();
+            updateWordList();
+        }
+
+        // ==================== СОХРАНЕНИЕ ДАННЫХ ====================
+        function saveUserData() {
+            localStorage.setItem(`english_data_${userId}`, JSON.stringify(currentUserData));
+        }
+
+        function loadUserData() {
+            const saved = localStorage.getItem(`english_data_${userId}`);
+            if (saved) {
+                currentUserData = JSON.parse(saved);
+            }
+            
+            // Применяем настройки
+            document.getElementById('theme-toggle').checked = currentUserData.settings.theme === 'dark';
+            toggleTheme(currentUserData.settings.theme === 'dark');
+            
+            document.getElementById('sound-toggle').checked = currentUserData.settings.sound;
+            document.getElementById('notifications-toggle').checked = currentUserData.settings.notifications;
+            
+            // Устанавливаем уровень сложности
+            const difficultyBtn = document.querySelector(`.difficulty-btn[onclick*="${currentUserData.settings.difficulty}"]`);
+            if (difficultyBtn) {
+                document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('active'));
+                difficultyBtn.classList.add('active');
+                setDifficulty(currentUserData.settings.difficulty);
+            }
+            
+            // Устанавливаем цвет темы
+            const themeBtn = document.querySelector(`.theme-btn[style*="${currentUserData.settings.themeColor}"]`);
+            if (themeBtn) {
+                document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+                themeBtn.classList.add('active');
+            }
+        }
+
+        function exportData() {
+            const data = JSON.stringify(currentUserData, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `english_progress_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification('📁 Данные экспортированы!');
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (confirm('Заменить текущие данные импортированными?')) {
+                        currentUserData = data;
+                        saveUserData();
+                        location.reload();
+                    }
+                } catch (error) {
+                    showNotification('❌ Ошибка при импорте файла');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function resetProgress() {
+            if (confirm('Вы уверены? Это сбросит весь ваш прогресс!')) {
+                currentUserData = {
+                    words: {},
+                    stats: {
+                        learned: 0,
+                        review: 0,
+                        today: 0,
+                        streak: 0,
+                        totalWords: 0,
+                        testsCompleted: 0,
+                        gamesWon: 0,
+                        accuracy: 0,
+                        xp: 0,
+                        level: 1,
+                        lastStudyDate: ''
+                    },
+                    settings: currentUserData.settings,
+                    achievements: []
+                };
+                saveUserData();
+                location.reload();
+            }
+        }
+
+        // ==================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ====================
+        function switchTab(tabName) {
+            // Обновляем активные табы
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
+            
+            document.querySelector(`.tab[data-tab="${tabName}"]`).classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.remove('hidden');
+            
+            // Если переключились на вкладку профиля, обновляем статистику
+            if (tabName === 'profile') {
+                updateProfile();
+            }
+        }
+
+        function getYesterdayDate() {
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            return yesterday.toDateString();
+        }
+
+        function showNotification(message) {
+            // Простое уведомление
+            alert(message);
+        }
+
         function speakWord() {
-            const word = vocabulary[currentWordIndex];
+            if (!currentWord || !currentUserData.settings.sound) return;
             
             if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance(word.en);
+                const utterance = new SpeechSynthesisUtterance(currentWord.en);
                 utterance.lang = 'en-US';
                 utterance.rate = 0.8;
                 speechSynthesis.speak(utterance);
@@ -1066,143 +2340,18 @@
             }
         }
 
-        // ==================== ДОСТИЖЕНИЯ ====================
-        
-        // Проверить достижения
-        function checkAchievements() {
-            const userData = JSON.parse(localStorage.getItem('englishBotData')) || {};
-            const unlocked = userData.unlockedAchievements || [];
-            const newAchievements = [];
-            
-            // Проверяем каждое достижение
-            if (learnedWords.length >= 1 && !unlocked.includes('first_word')) {
-                unlocked.push('first_word');
-                newAchievements.push('Первое слово');
-            }
-            if (learnedWords.length >= 10 && !unlocked.includes('10_words')) {
-                unlocked.push('10_words');
-                newAchievements.push('Десяточка');
-            }
-            if (learnedWords.length >= 50 && !unlocked.includes('50_words')) {
-                unlocked.push('50_words');
-                newAchievements.push('Полтинник');
-            }
-            if (learnedWords.length >= 100 && !unlocked.includes('100_words')) {
-                unlocked.push('100_words');
-                newAchievements.push('Сотня');
-            }
-            if (streak >= 3 && !unlocked.includes('3_day_streak')) {
-                unlocked.push('3_day_streak');
-                newAchievements.push('Терпеливый');
-            }
-            if (streak >= 7 && !unlocked.includes('7_day_streak')) {
-                unlocked.push('7_day_streak');
-                newAchievements.push('Недельный марафон');
-            }
-            if (streak >= 30 && !unlocked.includes('30_day_streak')) {
-                unlocked.push('30_day_streak');
-                newAchievements.push('Месяц дисциплины');
-            }
-            
-            // Сохраняем
-            if (newAchievements.length > 0) {
-                userData.unlockedAchievements = unlocked;
-                localStorage.setItem('englishBotData', JSON.stringify(userData));
-                
-                // Начисляем XP за достижения
-                newAchievements.forEach(achievementName => {
-                    const achievement = achievements.find(a => a.name === achievementName);
-                    if (achievement) {
-                        addXP(achievement.xp);
-                    }
-                });
-                
-                showNotification('🏆 Новые достижения: ' + newAchievements.join(', '));
-            }
-        }
-        
-        // Разблокировать достижение
-        function unlockAchievement(achievementId) {
-            const userData = JSON.parse(localStorage.getItem('englishBotData')) || {};
-            const unlocked = userData.unlockedAchievements || [];
-            
-            if (!unlocked.includes(achievementId)) {
-                unlocked.push(achievementId);
-                userData.unlockedAchievements = unlocked;
-                localStorage.setItem('englishBotData', JSON.stringify(userData));
-                
-                const achievement = achievements.find(a => a.id === achievementId);
-                if (achievement) {
-                    showNotification('🏆 Достижение получено: ' + achievement.name + '! +' + achievement.xp + ' XP');
-                    addXP(achievement.xp);
-                }
-            }
+        function startListeningMode() {
+            showNotification('👂 Режим аудирования скоро появится!');
         }
 
-        // ==================== СОХРАНЕНИЕ ДАННЫХ ====================
-        
-        // Сохранить данные
-        function saveUserData() {
-            const userData = {
-                learnedWords: learnedWords,
-                todayWords: todayWords,
-                streak: streak,
-                userXP: userXP,
-                userLevel: userLevel,
-                lastStudyDate: new Date().toDateString(),
-                unlockedAchievements: JSON.parse(localStorage.getItem('englishBotData'))?.unlockedAchievements || []
-            };
-            localStorage.setItem('englishBotData', JSON.stringify(userData));
-        }
-        
-        // Загрузить данные
-        function loadUserData() {
-            const saved = localStorage.getItem('englishBotData');
-            if (saved) {
-                const data = JSON.parse(saved);
-                learnedWords = data.learnedWords || [];
-                todayWords = data.todayWords || [];
-                streak = data.streak || 0;
-                userXP = data.userXP || 0;
-                userLevel = data.userLevel || 1;
-                
-                // Проверяем стрик (дни подряд)
-                const today = new Date().toDateString();
-                if (data.lastStudyDate === today) {
-                    // Уже занимались сегодня
-                } else if (isYesterday(data.lastStudyDate)) {
-                    // Занимались вчера - увеличиваем стрик
-                    streak++;
-                } else {
-                    // Пропустили день - сбрасываем стрик
-                    streak = 0;
-                }
-            }
-        }
-        
-        // Проверить, была ли дата вчера
-        function isYesterday(dateString) {
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1);
-            return dateString === yesterday.toDateString();
-        }
-
-        // ==================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ====================
-        
-        // Перемешать массив
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-        
-        // Показать уведомление
-        function showNotification(message) {
-            // Можно заменить на красивый toast
-            alert(message);
-        }
+        // ==================== ЗАГРУЗКА СТРАНИЦЫ ====================
+        window.onload = function() {
+            // Устанавливаем версию
+            document.querySelector('title').textContent += ` v${APP_VERSION}`;
+            
+            // Инициализируем приложение
+            initApp();
+        };
     </script>
 </body>
     </html>
